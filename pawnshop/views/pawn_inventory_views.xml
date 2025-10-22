@@ -75,7 +75,7 @@
                 <field name="date"/>
                 <field name="state"/>
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div class="oe_kanban_global_click">
                             <div class="o_kanban_record_top">
                                 <div class="o_kanban_record_headings">
@@ -180,7 +180,7 @@
                 <field name="state"/>
                 <field name="ticket_id"/>
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div class="oe_kanban_global_click">
                             <div class="o_kanban_image">
                                 <img t-if="record.photo_1.raw_value" 

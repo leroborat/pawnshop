@@ -144,6 +144,12 @@ class ResConfigSettings(models.TransientModel):
         config_parameter='pawnshop.auction_starting_percent',
         help="Starting bid as percentage of appraised value"
     )
+    pawn_auction_customer_id = fields.Many2one(
+        'res.partner',
+        string='Default Auction Customer',
+        config_parameter='pawnshop.auction_customer_id',
+        help="Default customer to use for auction sale invoices (can be a placeholder such as 'Auction Buyer')."
+    )
 
     # Product Configuration (for invoicing)
     pawn_interest_product_id = fields.Many2one(
@@ -225,3 +231,4 @@ class ResConfigSettings(models.TransientModel):
         params.set_param('pawnshop.penalty_product_id', self.pawn_penalty_product_id.id or False)
         params.set_param('pawnshop.service_fee_product_id', self.pawn_service_fee_product_id.id or False)
         params.set_param('pawnshop.default_rate_table_id', self.pawn_default_rate_table_id.id or False)
+        params.set_param('pawnshop.auction_customer_id', self.pawn_auction_customer_id.id or False)

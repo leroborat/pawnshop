@@ -48,6 +48,7 @@ Complete solution for pawnshop operations including:
         'views/pawn_ticket_views.xml',
         'views/pawn_branch_views.xml',
         'views/pawn_inventory_views.xml',
+        'views/auction_invoice_wizard_views.xml',
         'views/res_config_settings_views.xml',
         'views/pawn_menu.xml',
     ],

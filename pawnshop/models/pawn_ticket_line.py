@@ -297,7 +297,7 @@ class PawnTicketLine(models.Model):
             
             product_vals = {
                 'name': product_name,
-                'type': 'product',  # Storable product
+                'type': 'consu',  # Goods (valid for this Odoo 19 build)
                 'categ_id': default_categ.id,
                 'sale_ok': False,
                 'purchase_ok': False,
@@ -316,7 +316,7 @@ class PawnTicketLine(models.Model):
 
         # Create stock move (Virtual Customer Location → Pawn Custody)
         move_vals = {
-            'name': f"Pledge: {self.name} [{self.ticket_id.ticket_no}]",
+            'description_picking': f"Pledge: {self.name} [{self.ticket_id.ticket_no}]",
             'product_id': self.product_id.id,
             'product_uom_qty': 1,
             'product_uom': self.product_id.uom_id.id,
@@ -333,6 +333,72 @@ class PawnTicketLine(models.Model):
 
         return move
 
+    # ============================================================
+    # INVOICING (Auction Sale) - Phase 4
+    # ============================================================
+
+    def action_create_auction_invoice(self):
+        """
+        Create a customer invoice for a forfeited item being auction-sold.
+        Uses configured default auction customer. Links invoice back to the pawn ticket.
+        """
+        self.ensure_one()
+
+        if self.state != 'forfeited':
+            raise UserError(_('Auction invoice can only be created for forfeited items.'))
+
+        # Resolve auction customer from settings
+        auction_customer_id = int(self.env['ir.config_parameter'].sudo().get_param('pawnshop.auction_customer_id') or 0)
+        if not auction_customer_id:
+            raise UserError(_('Please configure a Default Auction Customer in Pawnshop Settings.'))
+
+        partner = self.env['res.partner'].browse(auction_customer_id)
+        if not partner.exists():
+            raise UserError(_('Configured Auction Customer not found.'))
+
+        # Prepare invoice
+        move_vals = {
+            'move_type': 'out_invoice',
+            'partner_id': partner.id,
+            'invoice_date': fields.Date.context_today(self),
+            'invoice_origin': self.ticket_id.ticket_no,
+            'currency_id': self.ticket_id.currency_id.id,
+            'pawn_ticket_id': self.ticket_id.id,
+            'invoice_line_ids': [
+                (0, 0, {
+                    'product_id': self.product_id.id,
+                    'name': _('%s (Ticket %s)') % (self.name, self.ticket_id.ticket_no),
+                    'quantity': 1,
+                    'price_unit': self.appraised_value or 0.0,
+                })
+            ],
+        }
+
+        inv = self.env['account.move'].create(move_vals)
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Auction Invoice'),
+            'res_model': 'account.move',
+            'res_id': inv.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+    def action_open_auction_invoice_wizard(self):
+        """Open the auction invoice wizard to choose buyer and price."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Auction Invoice'),
+            'res_model': 'pawn.auction.invoice.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_line_id': self.id,
+            },
+        }
+
     def _forfeit_item(self):
         """
         Move item from custody to forfeited inventory when ticket is forfeited.
@@ -344,8 +410,29 @@ class PawnTicketLine(models.Model):
         if self.state != 'forfeited':
             raise ValidationError(_('Cannot forfeit item that is not in forfeited state.'))
 
+        # Ensure a product exists (mirror intake behavior for robustness)
         if not self.product_id:
-            raise UserError(_('No product associated with this item. Cannot create stock move.'))
+            product_name = f"{self.name}"
+            if self.brand:
+                product_name += f" - {self.brand}"
+            if self.serial_number:
+                product_name += f" (SN: {self.serial_number})"
+
+            try:
+                default_categ = self.env.ref('pawnshop.product_category_pawned_items')
+            except ValueError:
+                default_categ = self.env.ref('product.product_category_all')
+
+            product_vals = {
+                'name': product_name,
+                'type': 'consu',  # Goods (valid for this Odoo 19 build)
+                'categ_id': default_categ.id,
+                'sale_ok': False,
+                'purchase_ok': False,
+                'tracking': 'none',
+                'default_code': self.barcode or False,
+            }
+            self.product_id = self.env['product.product'].create(product_vals)
 
         # Get stock locations
         try:
@@ -364,7 +451,7 @@ class PawnTicketLine(models.Model):
 
         # Create stock move (Pawn Custody → Forfeited Inventory)
         move_vals = {
-            'name': f"Forfeit: {self.name} [{self.ticket_id.ticket_no}]",
+            'description_picking': f"Forfeit: {self.name} [{self.ticket_id.ticket_no}]",
             'product_id': self.product_id.id,
             'product_uom_qty': 1,
             'product_uom': self.product_id.uom_id.id,
@@ -412,7 +499,7 @@ class PawnTicketLine(models.Model):
 
         # Create stock move (Pawn Custody → Customer)
         move_vals = {
-            'name': f"Redeem: {self.name} [{self.ticket_id.ticket_no}]",
+            'description_picking': f"Redeem: {self.name} [{self.ticket_id.ticket_no}]",
             'product_id': self.product_id.id,
             'product_uom_qty': 1,
             'product_uom': self.product_id.uom_id.id,

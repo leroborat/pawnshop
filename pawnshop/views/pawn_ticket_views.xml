@@ -36,12 +36,20 @@
                                 class="oe_highlight"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_renew" string="Renew" type="object"
-                                invisible="state not in ('pledged', 'renewed')"
+                                invisible="1"
                                 class="btn-primary"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_redeem" string="Redeem" type="object"
-                                invisible="state not in ('pledged', 'renewed')"
+                                invisible="1"
                                 class="btn-success"
+                                groups="pawnshop.group_pawn_cashier"/>
+                        <button name="action_create_renewal_invoice" string="Create Renewal Invoice" type="object"
+                                invisible="state not in ('pledged', 'renewed')"
+                                class="btn-secondary"
+                                groups="pawnshop.group_pawn_cashier"/>
+                        <button name="action_create_redemption_invoice" string="Create Redemption Invoice" type="object"
+                                invisible="state not in ('pledged', 'renewed')"
+                                class="btn-secondary"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_forfeit" string="Forfeit" type="object"
                                 invisible="state not in ('pledged', 'renewed')"
@@ -98,6 +106,11 @@
                                 <field name="service_fee" widget="monetary" readonly="1"/>
                                 <field name="total_due" widget="monetary" readonly="1" class="oe_subtotal_footer_separator"/>
                                 <field name="currency_id" invisible="1"/>
+                                <separator string="Invoices"/>
+                                <field name="payment_state" readonly="1"/>
+                                <field name="total_invoiced" widget="monetary" readonly="1"/>
+                                <field name="total_paid" widget="monetary" readonly="1"/>
+                                <field name="balance_due" widget="monetary" readonly="1"/>
                             </group>
                         </group>
                         <notebook>
@@ -174,7 +187,7 @@
                     <field name="is_in_grace"/>
                     <field name="is_due_today"/>
                     <templates>
-                        <t t-name="kanban-box">
+                        <t t-name="card">
                             <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.status_color.raw_value)} oe_kanban_card oe_kanban_global_click">
                                 <div class="oe_kanban_content">
                                     <div class="o_kanban_record_top">
@@ -280,6 +293,12 @@
             <field name="model">pawn.ticket.line</field>
             <field name="arch" type="xml">
                 <form string="Pawned Item">
+                    <header>
+                        <button name="action_open_auction_invoice_wizard" string="Create Auction Invoice" type="object"
+                                invisible="state != 'forfeited'"
+                                class="btn-secondary"
+                                groups="pawnshop.group_pawn_manager"/>
+                    </header>
                     <sheet>
                         <group>
                             <group string="Item Information">

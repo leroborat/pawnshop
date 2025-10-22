@@ -116,6 +116,10 @@
                                         <label for="pawn_auction_starting_percent" string="Starting Bid" class="col-lg-4 o_light_label"/>
                                         <field name="pawn_auction_starting_percent" class="oe_inline"/> % of appraised value
                                     </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_auction_customer_id" string="Default Auction Customer" class="col-lg-4 o_light_label"/>
+                                        <field name="pawn_auction_customer_id" placeholder="Select default auction buyer..."/>
+                                    </div>
                                 </div>
                             </setting>
                         </block>

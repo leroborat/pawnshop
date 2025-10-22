@@ -318,6 +318,35 @@ class PawnTicket(models.Model):
         compute='_compute_invoice_count',
     )
 
+    total_invoiced = fields.Monetary(
+        string='Total Invoiced',
+        compute='_compute_invoice_totals',
+        currency_field='currency_id',
+        help="Sum of amounts on linked customer invoices"
+    )
+    total_paid = fields.Monetary(
+        string='Total Paid',
+        compute='_compute_invoice_totals',
+        currency_field='currency_id',
+        help="Sum of paid amounts on linked invoices"
+    )
+    balance_due = fields.Monetary(
+        string='Balance Due',
+        compute='_compute_invoice_totals',
+        currency_field='currency_id',
+        help="Outstanding balance across linked invoices"
+    )
+    payment_state = fields.Selection(
+        selection=[
+            ('not_paid', 'Not Paid'),
+            ('partial', 'Partially Paid'),
+            ('paid', 'Paid'),
+        ],
+        string='Payment Status',
+        compute='_compute_payment_state',
+        help="Mirror of payment status from linked invoices"
+    )
+
     # Notes
     notes = fields.Text(
         string='Internal Notes',
@@ -488,6 +517,36 @@ class PawnTicket(models.Model):
         for record in self:
             record.invoice_count = len(record.invoice_ids)
 
+    def _compute_invoice_totals(self):
+        for record in self:
+            amount_total = 0.0
+            amount_paid = 0.0
+            for inv in record.invoice_ids:
+                # Only consider customer invoices/credit notes
+                if inv.move_type in ('out_invoice', 'out_refund'):
+                    sign = 1.0 if inv.move_type == 'out_invoice' else -1.0
+                    amount_total += sign * (inv.amount_total or 0.0)
+                    if inv.payment_state == 'paid':
+                        amount_paid += sign * (inv.amount_total or 0.0)
+                    elif inv.payment_state == 'partial':
+                        # Best-effort: use amount_total - amount_residual
+                        amount_paid += sign * ((inv.amount_total or 0.0) - (inv.amount_residual or 0.0))
+            record.total_invoiced = amount_total
+            record.total_paid = amount_paid
+            record.balance_due = max(amount_total - amount_paid, 0.0)
+
+    def _compute_payment_state(self):
+        for record in self:
+            states = set(record.invoice_ids.mapped('payment_state')) if record.invoice_ids else set()
+            if not states:
+                record.payment_state = 'not_paid'
+            elif states == {'paid'}:
+                record.payment_state = 'paid'
+            elif 'partial' in states or ('paid' in states and 'not_paid' in states):
+                record.payment_state = 'partial'
+            else:
+                record.payment_state = 'not_paid'
+
     # ============================================================
     # SEARCH METHODS
     # ============================================================
@@ -609,29 +668,15 @@ class PawnTicket(models.Model):
 
     def action_renew(self):
         """Renew ticket - extends maturity date"""
-        # Will be implemented as a wizard in Phase 5
+        # Phase 5: Wizard deferred. Provide clear user feedback instead of opening non-existent model.
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Renew Ticket'),
-            'res_model': 'pawn.renew.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {'default_ticket_id': self.id},
-        }
+        raise UserError(_('Renew wizard is not yet available. This will be implemented in Phase 5.'))
 
     def action_redeem(self):
         """Redeem ticket - customer pays and retrieves items"""
-        # Will be implemented as a wizard in Phase 5
+        # Phase 5: Wizard deferred. Provide clear user feedback instead of opening non-existent model.
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Redeem Ticket'),
-            'res_model': 'pawn.redeem.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {'default_ticket_id': self.id},
-        }
+        raise UserError(_('Redemption wizard is not yet available. This will be implemented in Phase 5.'))
 
     def action_forfeit(self):
         """Forfeit ticket - items become company property"""
@@ -674,4 +719,141 @@ class PawnTicket(models.Model):
             'view_mode': 'list,form',
             'domain': [('id', 'in', self.invoice_ids.ids)],
             'context': {'default_partner_id': self.customer_id.id},
+        }
+
+    # ============================================================
+    # INVOICE CREATION (Phase 4)
+    # ============================================================
+
+    def _prepare_invoice_vals(self, kind):
+        """
+        Prepare account.move values for a customer invoice.
+        kind: 'renewal' | 'redemption'
+        """
+        self.ensure_one()
+        return {
+            'move_type': 'out_invoice',
+            'partner_id': self.customer_id.id,
+            'invoice_date': fields.Date.context_today(self),
+            'invoice_origin': self.ticket_no,
+            'currency_id': self.currency_id.id,
+            'pawn_ticket_id': self.id,
+            'invoice_line_ids': [],
+        }
+
+    def _get_configured_product(self, param_key):
+        product_id = int(self.env['ir.config_parameter'].sudo().get_param(param_key) or 0)
+        return self.env['product.product'].browse(product_id) if product_id else self.env['product.product']
+
+    def _prepare_invoice_lines(self, kind):
+        """
+        Build invoice lines based on kind. Returns list of (0, 0, vals).
+        """
+        self.ensure_one()
+        lines = []
+        Product = self.env['product.product']
+
+        prod_interest = self._get_configured_product('pawnshop.interest_product_id')
+        prod_penalty = self._get_configured_product('pawnshop.penalty_product_id')
+        prod_service = self._get_configured_product('pawnshop.service_fee_product_id')
+
+        if kind == 'renewal':
+            # Interest
+            if self.interest_amount:
+                if not prod_interest:
+                    raise UserError(_('Configure Interest Income Product in settings.'))
+                lines.append((0, 0, {
+                    'product_id': prod_interest.id,
+                    'name': _('Interest for %s') % (self.ticket_no,),
+                    'quantity': 1,
+                    'price_unit': self.interest_amount,
+                }))
+            # Penalty
+            if self.penalty_amount:
+                if not prod_penalty:
+                    raise UserError(_('Configure Penalty Product in settings.'))
+                lines.append((0, 0, {
+                    'product_id': prod_penalty.id,
+                    'name': _('Penalty for %s') % (self.ticket_no,),
+                    'quantity': 1,
+                    'price_unit': self.penalty_amount,
+                }))
+            # Service Fee
+            if self.service_fee:
+                if not prod_service:
+                    raise UserError(_('Configure Service Fee Product in settings.'))
+                lines.append((0, 0, {
+                    'product_id': prod_service.id,
+                    'name': _('Service Fee for %s') % (self.ticket_no,),
+                    'quantity': 1,
+                    'price_unit': self.service_fee,
+                }))
+        elif kind == 'redemption':
+            # Principal (use service fee product as placeholder if dedicated product not set)
+            principal_product = prod_service or prod_interest
+            if not principal_product:
+                raise UserError(_('Configure at least one service product in settings to invoice principal.'))
+            lines.append((0, 0, {
+                'product_id': principal_product.id,
+                'name': _('Principal for %s') % (self.ticket_no,),
+                'quantity': 1,
+                'price_unit': self.principal_amount,
+            }))
+            # Interest
+            if self.interest_amount:
+                if not prod_interest:
+                    raise UserError(_('Configure Interest Income Product in settings.'))
+                lines.append((0, 0, {
+                    'product_id': prod_interest.id,
+                    'name': _('Interest for %s') % (self.ticket_no,),
+                    'quantity': 1,
+                    'price_unit': self.interest_amount,
+                }))
+            # Penalty
+            if self.penalty_amount:
+                if not prod_penalty:
+                    raise UserError(_('Configure Penalty Product in settings.'))
+                lines.append((0, 0, {
+                    'product_id': prod_penalty.id,
+                    'name': _('Penalty for %s') % (self.ticket_no,),
+                    'quantity': 1,
+                    'price_unit': self.penalty_amount,
+                }))
+        else:
+            raise UserError(_('Unsupported invoice kind: %s') % kind)
+
+        return lines
+
+    def action_create_renewal_invoice(self):
+        self.ensure_one()
+        if self.state not in ('pledged', 'renewed'):
+            raise UserError(_('Renewal invoices can only be created for pledged or renewed tickets.'))
+        vals = self._prepare_invoice_vals('renewal')
+        vals['invoice_line_ids'] = self._prepare_invoice_lines('renewal')
+        inv = self.env['account.move'].create(vals)
+        self.invoice_ids = [(4, inv.id)]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Renewal Invoice'),
+            'res_model': 'account.move',
+            'res_id': inv.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+    def action_create_redemption_invoice(self):
+        self.ensure_one()
+        if self.state not in ('pledged', 'renewed'):
+            raise UserError(_('Redemption invoices can only be created for pledged or renewed tickets.'))
+        vals = self._prepare_invoice_vals('redemption')
+        vals['invoice_line_ids'] = self._prepare_invoice_lines('redemption')
+        inv = self.env['account.move'].create(vals)
+        self.invoice_ids = [(4, inv.id)]
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Redemption Invoice'),
+            'res_model': 'account.move',
+            'res_id': inv.id,
+            'view_mode': 'form',
+            'target': 'current',
         }
