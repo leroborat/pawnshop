@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Pawnshop Security Categories -->
+        <record id="module_category_pawnshop" model="ir.module.category">
+            <field name="name">Pawnshop</field>
+            <field name="description">Manage pawnshop operations and access rights</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Security Groups -->
+
+        <!-- Cashier: Basic operations - intake, renew, redeem -->
+        <record id="group_pawn_cashier" model="res.groups">
+            <field name="name">Cashier</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Can create tickets, process renewals and redemptions</field>
+        </record>
+
+        <!-- Appraiser: Item appraisal and valuation -->
+        <record id="group_pawn_appraiser" model="res.groups">
+            <field name="name">Appraiser</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('group_pawn_cashier'))]"/>
+            <field name="comment">Can appraise items and set loan amounts</field>
+        </record>
+
+        <!-- Manager: Branch operations and oversight -->
+        <record id="group_pawn_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('group_pawn_appraiser'))]"/>
+            <field name="comment">Can manage branch operations, forfeitures, and auctions</field>
+        </record>
+
+        <!-- Accountant: Financial oversight -->
+        <record id="group_pawn_accountant" model="res.groups">
+            <field name="name">Accountant</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Can view financial reports and invoices</field>
+        </record>
+
+        <!-- Auditor: Read-only access to all records -->
+        <record id="group_pawn_auditor" model="res.groups">
+            <field name="name">Auditor</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Read-only access to all pawnshop records</field>
+        </record>
+
+        <!-- Admin: Full system access -->
+        <record id="group_pawn_admin" model="res.groups">
+            <field name="name">Administrator</field>
+            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="implied_ids" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_accountant'))]"/>
+            <field name="comment">Full access to all pawnshop features and configuration</field>
+        </record>
+
+        <!-- Multi-user record rules will be added here for branch-based access -->
+
+    </data>
+</odoo>

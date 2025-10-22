@@ -1,0 +1,2 @@
+Placeholder for module icon.
+Replace this file with an actual icon.png (128x128 or 256x256 PNG image)

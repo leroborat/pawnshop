@@ -1,0 +1,138 @@
+# -*- coding: utf-8 -*-
+
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+
+class PawnBranch(models.Model):
+    """
+    Represents a physical pawnshop branch location.
+    Each branch has its own warehouse for inventory management
+    and generates unique ticket sequences.
+    """
+    _name = 'pawn.branch'
+    _description = 'Pawnshop Branch'
+    _order = 'sequence, name'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    # Basic Information
+    name = fields.Char(
+        string='Branch Name',
+        required=True,
+        tracking=True,
+        help="Full name of the branch (e.g., 'Manila Main Branch')"
+    )
+    code = fields.Char(
+        string='Branch Code',
+        required=True,
+        size=5,
+        tracking=True,
+        help="Short code for branch identification (e.g., 'MNL01'). Used in ticket numbering."
+    )
+    sequence = fields.Integer(
+        string='Sequence',
+        default=10,
+        help="Order of display in lists and reports"
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+        tracking=True,
+        help="Inactive branches cannot process new transactions"
+    )
+
+    # Location Details
+    street = fields.Char(string='Street')
+    street2 = fields.Char(string='Street2')
+    city = fields.Char(string='City')
+    state_id = fields.Many2one(
+        'res.country.state',
+        string='State'
+    )
+    zip = fields.Char(string='ZIP')
+    country_id = fields.Many2one(
+        'res.country',
+        string='Country'
+    )
+    phone = fields.Char(string='Phone')
+    email = fields.Char(string='Email')
+
+    # Operational Settings
+    warehouse_id = fields.Many2one(
+        'stock.warehouse',
+        string='Warehouse',
+        required=True,
+        ondelete='restrict',
+        tracking=True,
+        help="Warehouse for managing this branch's inventory (collateral, forfeited items)"
+    )
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company,
+        tracking=True
+    )
+
+    # Manager
+    manager_id = fields.Many2one(
+        'res.users',
+        string='Branch Manager',
+        tracking=True,
+        help="User responsible for this branch"
+    )
+
+    # Statistics (computed)
+    ticket_count = fields.Integer(
+        string='Active Tickets',
+        compute='_compute_statistics',
+        help="Number of active pawn tickets"
+    )
+    due_today_count = fields.Integer(
+        string='Due Today',
+        compute='_compute_statistics',
+        help="Tickets maturing today"
+    )
+    overdue_count = fields.Integer(
+        string='Overdue',
+        compute='_compute_statistics',
+        help="Tickets past grace period"
+    )
+
+    # SQL Constraints
+    _sql_constraints = [
+        ('code_unique', 'UNIQUE(code)', 'Branch code must be unique!'),
+        ('name_company_unique', 'UNIQUE(name, company_id)', 'Branch name must be unique per company!'),
+    ]
+
+    @api.constrains('code')
+    def _check_code_format(self):
+        """Ensure branch code is uppercase alphanumeric"""
+        for record in self:
+            if record.code and not record.code.replace('-', '').replace('_', '').isalnum():
+                raise ValidationError(_('Branch code must contain only letters, numbers, hyphens, or underscores.'))
+
+    def _compute_statistics(self):
+        """Compute ticket statistics for each branch"""
+        # Placeholder - will be implemented when pawn.ticket model is created
+        for record in self:
+            record.ticket_count = 0
+            record.due_today_count = 0
+            record.overdue_count = 0
+
+    @api.model
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None):
+        """Allow searching by code or name"""
+        if domain is None:
+            domain = []
+        if name:
+            domain = ['|', ('code', operator, name), ('name', operator, name)] + domain
+        return self._search(domain, limit=limit, order=order)
+
+    def name_get(self):
+        """Display as [CODE] Name"""
+        result = []
+        for record in self:
+            name = f"[{record.code}] {record.name}"
+            result.append((record.id, name))
+        return result

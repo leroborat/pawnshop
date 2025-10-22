@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Pawnshop Settings Form View -->
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.pawnshop</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app string="Pawnshop" name="pawnshop">
+                        <block title="Loan Settings" name="loan_settings">
+                            <setting help="Configure default loan parameters">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_default_maturity_days" string="Maturity Period" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_default_maturity_days" class="oe_inline"/> days
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_grace_period_days" string="Grace Period" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_grace_period_days" class="oe_inline"/> days
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_max_ltv_ratio" string="Maximum LTV Ratio" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_max_ltv_ratio" class="oe_inline"/> %
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_min_loan_amount" string="Min/Max Loan Amount" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_min_loan_amount" class="oe_inline"/> to <field name="pawn_max_loan_amount" class="oe_inline"/>
+                                        <field name="currency_id" invisible="1"/>
+                                    </div>
+                                </div>
+                            </setting>
+                            <setting string="Default Rate Table" help="Default rate table for new tickets">
+                                <field name="pawn_default_rate_table_id" placeholder="Select rate table..."/>
+                            </setting>
+                        </block>
+
+                        <block title="Interest &amp; Penalties" name="interest_penalties">
+                            <setting help="Configure penalty rates for overdue tickets">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_penalty_rate_percent" string="Penalty Rate" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_penalty_rate_percent" class="oe_inline"/> %
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_penalty_period" string="Penalty Period" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_penalty_period" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <block title="Service Fees" name="service_fees">
+                            <setting help="Configure service fees charged on transactions">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_service_fee_type" string="Fee Type" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_service_fee_type" class="oe_inline"/>
+                                    </div>
+                                    <div class="row mt-2" invisible="pawn_service_fee_type == 'fixed'">
+                                        <label for="pawn_service_fee_percent" string="Fee Percentage" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_service_fee_percent" class="oe_inline"/> %
+                                    </div>
+                                    <div class="row mt-2" invisible="pawn_service_fee_type == 'percent'">
+                                        <label for="pawn_service_fee_amount" string="Fixed Fee" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_service_fee_amount" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <block title="KYC Requirements" name="kyc_requirements">
+                            <setting string="Require KYC Documentation" help="Require valid ID and customer information">
+                                <field name="pawn_require_kyc"/>
+                            </setting>
+                            <setting string="Require Item Photos" help="Require photos for all pawned items">
+                                <field name="pawn_require_photo"/>
+                            </setting>
+                            <setting help="Minimum age requirement for customers">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_min_customer_age" string="Minimum Age" class="col-lg-3 o_light_label"/>
+                                        <field name="pawn_min_customer_age" class="oe_inline"/> years
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <block title="Notifications" name="notifications">
+                            <setting string="Enable Notifications" help="Send SMS/Email notifications to customers">
+                                <field name="pawn_enable_notifications"/>
+                            </setting>
+                            <setting help="Configure notification timing" invisible="not pawn_enable_notifications">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_notify_days_before_maturity" string="Remind Before Maturity" class="col-lg-4 o_light_label"/>
+                                        <field name="pawn_notify_days_before_maturity" class="oe_inline"/> days
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_notify_grace_period" string="Notify Grace Period" class="col-lg-4 o_light_label"/>
+                                        <field name="pawn_notify_grace_period"/>
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <block title="Auction Settings" name="auction_settings">
+                            <setting help="Configure auction parameters">
+                                <div class="content-group">
+                                    <div class="row mt-2">
+                                        <label for="pawn_auto_auction_after_days" string="Auto-Auction After" class="col-lg-4 o_light_label"/>
+                                        <field name="pawn_auto_auction_after_days" class="oe_inline"/> days (0 to disable)
+                                    </div>
+                                    <div class="row mt-2">
+                                        <label for="pawn_auction_starting_percent" string="Starting Bid" class="col-lg-4 o_light_label"/>
+                                        <field name="pawn_auction_starting_percent" class="oe_inline"/> % of appraised value
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+
+                        <block title="Product Configuration" name="product_config">
+                            <setting string="Interest Income Product" help="Product for interest income in invoices">
+                                <field name="pawn_interest_product_id" placeholder="Select product..."/>
+                            </setting>
+                            <setting string="Penalty Fee Product" help="Product for penalty fees in invoices">
+                                <field name="pawn_penalty_product_id" placeholder="Select product..."/>
+                            </setting>
+                            <setting string="Service Fee Product" help="Product for service fees in invoices">
+                                <field name="pawn_service_fee_product_id" placeholder="Select product..."/>
+                            </setting>
+                        </block>
+
+                        <block title="Print Settings" name="print_settings">
+                            <setting string="Print QR Code" help="Include QR code on pawn tickets">
+                                <field name="pawn_print_qr_code"/>
+                            </setting>
+                            <setting string="Print Terms and Conditions">
+                                <field name="pawn_print_terms"/>
+                                <div class="content-group mt-2" invisible="not pawn_print_terms">
+                                    <field name="pawn_terms_text" placeholder="Enter your terms and conditions here..."/>
+                                </div>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Settings Action -->
+        <record id="action_pawn_config_settings" model="ir.actions.act_window">
+            <field name="name">Pawnshop Settings</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module': 'pawnshop'}</field>
+        </record>
+
+    </data>
+</odoo>

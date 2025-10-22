@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Parent Location for all Pawn Locations -->
+        <record id="stock_location_pawn" model="stock.location">
+            <field name="name">Pawn Operations</field>
+            <field name="usage">view</field>
+            <field name="location_id" ref="stock.stock_location_locations"/>
+            <field name="comment">Parent location for all pawnshop inventory locations</field>
+        </record>
+
+        <!-- Pawn Collateral (Custody) Location -->
+        <record id="stock_location_pawn_custody" model="stock.location">
+            <field name="name">Pawn Collateral (Custody)</field>
+            <field name="usage">internal</field>
+            <field name="location_id" ref="stock_location_pawn"/>
+            <field name="comment">Items currently held as collateral - customer-owned, in custody</field>
+        </record>
+
+        <!-- Forfeited Inventory Location -->
+        <record id="stock_location_pawn_forfeited" model="stock.location">
+            <field name="name">Forfeited Inventory</field>
+            <field name="usage">internal</field>
+            <field name="location_id" ref="stock_location_pawn"/>
+            <field name="comment">Forfeited items - company-owned, available for sale</field>
+        </record>
+
+        <!-- Auction Staging Location -->
+        <record id="stock_location_pawn_auction" model="stock.location">
+            <field name="name">Auction Staging</field>
+            <field name="usage">internal</field>
+            <field name="location_id" ref="stock_location_pawn"/>
+            <field name="comment">Items staged for auction - ready for bidding</field>
+        </record>
+
+        <!-- Customer Return Location (Virtual) -->
+        <record id="stock_location_pawn_customer_return" model="stock.location">
+            <field name="name">Pawn Customer Returns</field>
+            <field name="usage">customer</field>
+            <field name="location_id" ref="stock.stock_location_locations_virtual"/>
+            <field name="comment">Virtual location for redeemed items returned to customers</field>
+        </record>
+
+    </data>
+</odoo>

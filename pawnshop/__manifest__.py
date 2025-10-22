@@ -1,0 +1,59 @@
+{
+    'name': "Pawnshop Management System",
+    'summary': "Comprehensive pawnshop management with inventory and invoicing integration",
+    'description': """
+Pawnshop Management System
+==========================
+Complete solution for pawnshop operations including:
+* Multi-branch support with security
+* Pawn ticket management with automated workflows
+* Inventory tracking for collateral and forfeited items
+* Invoicing integration for renewals, redemptions, and sales
+* Rate tables and interest calculations
+* KYC management and reporting
+* Notifications and automated reminders
+    """,
+    'author': "Custom Development",
+    'website': "https://www.yourcompany.com",
+    'category': 'Sales',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+
+    # Module dependencies
+    'depends': [
+        'base',
+        'account',      # Invoicing (Community)
+        'stock',        # Inventory Management
+        'product',      # Product Management
+        'contacts',     # Customer Management
+        'web',          # Web Interface
+        'mail',         # Notifications
+    ],
+
+    # Data files loaded in order
+    'data': [
+        # Security
+        'security/pawn_security.xml',
+        'security/ir.model.access.csv',
+
+        # Data
+        'data/pawn_sequence.xml',
+        'data/pawn_category_data.xml',
+        'data/pawn_stock_location.xml',
+
+        # Views
+        'views/pawn_branch_views.xml',
+        'views/pawn_item_category_views.xml',
+        'views/pawn_rate_table_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/pawn_menu.xml',
+    ],
+
+    # Demo data
+    'demo': [],
+
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+}
+

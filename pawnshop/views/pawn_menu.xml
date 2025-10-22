@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Root Menu -->
+        <menuitem id="menu_pawnshop_root"
+                  name="Pawnshop"
+                  sequence="10"
+                  web_icon="pawnshop,static/description/icon.png"
+                  groups="group_pawn_cashier"/>
+
+        <!-- Main Menus -->
+        <menuitem id="menu_pawnshop_operations"
+                  name="Operations"
+                  parent="menu_pawnshop_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_pawnshop_inventory"
+                  name="Inventory"
+                  parent="menu_pawnshop_root"
+                  sequence="20"/>
+
+        <menuitem id="menu_pawnshop_reports"
+                  name="Reports"
+                  parent="menu_pawnshop_root"
+                  sequence="30"
+                  groups="group_pawn_manager,group_pawn_accountant"/>
+
+        <menuitem id="menu_pawnshop_configuration"
+                  name="Configuration"
+                  parent="menu_pawnshop_root"
+                  sequence="90"
+                  groups="group_pawn_admin"/>
+
+        <!-- Operations Submenus -->
+        <!-- Placeholder for Pawn Tickets (Phase 2) -->
+        <!-- <menuitem id="menu_pawnshop_ticket"
+                  name="Pawn Tickets"
+                  parent="menu_pawnshop_operations"
+                  action="action_pawn_ticket"
+                  sequence="10"/> -->
+        <!-- Note: action_pawn_ticket will be defined in Phase 2 -->
+
+        <!-- Inventory Submenus -->
+        <!-- Placeholder for Inventory views (Phase 3) -->
+        <!-- <menuitem id="menu_pawnshop_custody"
+                  name="Collateral in Custody"
+                  parent="menu_pawnshop_inventory"
+                  sequence="10"/>
+
+        <menuitem id="menu_pawnshop_forfeited"
+                  name="Forfeited Inventory"
+                  parent="menu_pawnshop_inventory"
+                  sequence="20"/>
+
+        <menuitem id="menu_pawnshop_auction"
+                  name="Auction"
+                  parent="menu_pawnshop_inventory"
+                  sequence="30"/> -->
+
+        <!-- Configuration Submenus -->
+        <menuitem id="menu_pawnshop_config_branches"
+                  name="Branches"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_branch"
+                  sequence="10"
+                  groups="group_pawn_admin"/>
+
+        <menuitem id="menu_pawnshop_config_categories"
+                  name="Item Categories"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_item_category"
+                  sequence="20"
+                  groups="group_pawn_admin"/>
+
+        <menuitem id="menu_pawnshop_config_rates"
+                  name="Rate Tables"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_rate_table"
+                  sequence="30"
+                  groups="group_pawn_admin"/>
+
+        <menuitem id="menu_pawnshop_config_settings"
+                  name="Settings"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_config_settings"
+                  sequence="90"
+                  groups="group_pawn_admin"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Item Category List View -->
+        <record id="view_pawn_item_category_list" model="ir.ui.view">
+            <field name="name">pawn.item.category.list</field>
+            <field name="model">pawn.item.category</field>
+            <field name="arch" type="xml">
+                <list string="Item Categories" default_order="sequence,name">
+                    <field name="sequence" widget="handle"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="default_loan_to_value_ratio" string="Default LTV %"/>
+                    <field name="requires_serial" widget="boolean_toggle"/>
+                    <field name="requires_photo" widget="boolean_toggle"/>
+                    <field name="item_count"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Item Category Form View -->
+        <record id="view_pawn_item_category_form" model="ir.ui.view">
+            <field name="name">pawn.item.category.form</field>
+            <field name="model">pawn.item.category</field>
+            <field name="arch" type="xml">
+                <form string="Item Category">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_items"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-cubes">
+                                <field name="item_count" widget="statinfo" string="Items"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <field name="active" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="name" placeholder="e.g., Gold Jewelry"/>
+                                <field name="code" placeholder="e.g., GOLD"/>
+                                <field name="parent_id"
+                                       options="{'no_create': True}"
+                                       placeholder="Parent category (optional)"/>
+                                <field name="sequence"/>
+                            </group>
+                            <group>
+                                <field name="default_loan_to_value_ratio" string="Default LTV Ratio (%)"/>
+                                <field name="requires_serial"/>
+                                <field name="requires_photo"/>
+                                <field name="product_categ_id"
+                                       string="Product Category (for forfeited items)"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        <group string="Description">
+                            <field name="description" nolabel="1" placeholder="Detailed description of items in this category..."/>
+                        </group>
+                        <notebook invisible="not child_ids">
+                            <page string="Sub-Categories" name="subcategories">
+                                <field name="child_ids">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="default_loan_to_value_ratio" string="LTV %"/>
+                                        <field name="requires_serial"/>
+                                        <field name="requires_photo"/>
+                                        <field name="active" widget="boolean_toggle"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Item Category Kanban View -->
+        <record id="view_pawn_item_category_kanban" model="ir.ui.view">
+            <field name="name">pawn.item.category.kanban</field>
+            <field name="model">pawn.item.category</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="color"/>
+                    <field name="default_loan_to_value_ratio"/>
+                    <field name="item_count"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_card_content">
+                                <div class="oe_kanban_global_click">
+                                    <div class="o_kanban_record_top mb-2">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <span class="badge" t-attf-style="background-color: {{kanban_color(record.color.raw_value)}}">
+                                                    <field name="code"/>
+                                                </span>
+                                                <field name="name"/>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div>
+                                            <i class="fa fa-percent"/> LTV: <field name="default_loan_to_value_ratio"/>%
+                                        </div>
+                                        <div class="mt-1">
+                                            <span class="badge text-bg-info">
+                                                <i class="fa fa-cubes"/> <field name="item_count"/> items
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Item Category Search View -->
+        <record id="view_pawn_item_category_search" model="ir.ui.view">
+            <field name="name">pawn.item.category.search</field>
+            <field name="model">pawn.item.category</field>
+            <field name="arch" type="xml">
+                <search string="Search Categories">
+                    <field name="name" string="Category"
+                           filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="parent_id"/>
+                    <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                    <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Top Level" name="filter_top_level" domain="[('parent_id', '=', False)]"/>
+                    <filter string="Requires Serial" name="filter_requires_serial" domain="[('requires_serial', '=', True)]"/>
+                    <filter string="Requires Photo" name="filter_requires_photo" domain="[('requires_photo', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Parent Category" name="group_parent" context="{'group_by': 'parent_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Item Category Action -->
+        <record id="action_pawn_item_category" model="ir.actions.act_window">
+            <field name="name">Item Categories</field>
+            <field name="res_model">pawn.item.category</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first item category
+                </p>
+                <p>
+                    Categories help organize pawned items and determine loan rates.
+                    Common categories include Jewelry, Electronics, Tools, and Appliances.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

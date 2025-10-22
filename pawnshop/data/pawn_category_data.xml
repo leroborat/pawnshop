@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default Item Categories -->
+
+        <!-- Jewelry -->
+        <record id="category_jewelry" model="pawn.item.category">
+            <field name="name">Jewelry</field>
+            <field name="code">JWLRY</field>
+            <field name="sequence">10</field>
+            <field name="default_loan_to_value_ratio">70.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Gold, silver, and precious jewelry items</field>
+        </record>
+
+        <record id="category_gold_jewelry" model="pawn.item.category">
+            <field name="name">Gold Jewelry</field>
+            <field name="code">GOLD</field>
+            <field name="sequence">11</field>
+            <field name="parent_id" ref="category_jewelry"/>
+            <field name="default_loan_to_value_ratio">75.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Gold rings, necklaces, bracelets, earrings</field>
+        </record>
+
+        <record id="category_silver_jewelry" model="pawn.item.category">
+            <field name="name">Silver Jewelry</field>
+            <field name="code">SILVR</field>
+            <field name="sequence">12</field>
+            <field name="parent_id" ref="category_jewelry"/>
+            <field name="default_loan_to_value_ratio">65.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Silver jewelry and accessories</field>
+        </record>
+
+        <!-- Electronics -->
+        <record id="category_electronics" model="pawn.item.category">
+            <field name="name">Electronics</field>
+            <field name="code">ELEC</field>
+            <field name="sequence">20</field>
+            <field name="default_loan_to_value_ratio">60.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Electronic devices and gadgets</field>
+        </record>
+
+        <record id="category_mobile_phones" model="pawn.item.category">
+            <field name="name">Mobile Phones</field>
+            <field name="code">PHONE</field>
+            <field name="sequence">21</field>
+            <field name="parent_id" ref="category_electronics"/>
+            <field name="default_loan_to_value_ratio">55.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Smartphones and mobile devices</field>
+        </record>
+
+        <record id="category_laptops" model="pawn.item.category">
+            <field name="name">Laptops</field>
+            <field name="code">LAPTOP</field>
+            <field name="sequence">22</field>
+            <field name="parent_id" ref="category_electronics"/>
+            <field name="default_loan_to_value_ratio">60.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Laptop computers and notebooks</field>
+        </record>
+
+        <record id="category_tablets" model="pawn.item.category">
+            <field name="name">Tablets</field>
+            <field name="code">TABLET</field>
+            <field name="sequence">23</field>
+            <field name="parent_id" ref="category_electronics"/>
+            <field name="default_loan_to_value_ratio">55.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Tablet devices</field>
+        </record>
+
+        <!-- Appliances -->
+        <record id="category_appliances" model="pawn.item.category">
+            <field name="name">Appliances</field>
+            <field name="code">APPL</field>
+            <field name="sequence">30</field>
+            <field name="default_loan_to_value_ratio">50.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Home and kitchen appliances</field>
+        </record>
+
+        <!-- Tools -->
+        <record id="category_tools" model="pawn.item.category">
+            <field name="name">Tools</field>
+            <field name="code">TOOLS</field>
+            <field name="sequence">40</field>
+            <field name="default_loan_to_value_ratio">55.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Hand and power tools</field>
+        </record>
+
+        <!-- Watches -->
+        <record id="category_watches" model="pawn.item.category">
+            <field name="name">Watches</field>
+            <field name="code">WATCH</field>
+            <field name="sequence">50</field>
+            <field name="default_loan_to_value_ratio">65.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Wristwatches and timepieces</field>
+        </record>
+
+        <!-- Bags & Accessories -->
+        <record id="category_bags" model="pawn.item.category">
+            <field name="name">Bags & Accessories</field>
+            <field name="code">BAGS</field>
+            <field name="sequence">60</field>
+            <field name="default_loan_to_value_ratio">50.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Designer bags, wallets, and accessories</field>
+        </record>
+
+        <!-- Vehicles -->
+        <record id="category_vehicles" model="pawn.item.category">
+            <field name="name">Vehicles</field>
+            <field name="code">VHCL</field>
+            <field name="sequence">70</field>
+            <field name="default_loan_to_value_ratio">60.0</field>
+            <field name="requires_serial">True</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Motorcycles, bicycles, and vehicles</field>
+        </record>
+
+        <!-- Others -->
+        <record id="category_others" model="pawn.item.category">
+            <field name="name">Others</field>
+            <field name="code">OTHER</field>
+            <field name="sequence">99</field>
+            <field name="default_loan_to_value_ratio">50.0</field>
+            <field name="requires_serial">False</field>
+            <field name="requires_photo">True</field>
+            <field name="description">Miscellaneous items</field>
+        </record>
+
+    </data>
+</odoo>
