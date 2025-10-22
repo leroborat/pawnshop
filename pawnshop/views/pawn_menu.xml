@@ -7,15 +7,9 @@
                   name="Pawnshop"
                   sequence="10"
                   web_icon="pawnshop,static/description/icon.png"
+                  action="action_pawn_dashboard"
                   groups="group_pawn_cashier"/>
 
-        <!-- Quick Action: New Ticket (Top Level) -->
-        <menuitem id="menu_pawnshop_new_ticket_quick"
-                  name="New Pawn Ticket"
-                  parent="menu_pawnshop_root"
-                  action="action_pawn_intake_wizard"
-                  sequence="5"
-                  groups="group_pawn_cashier,group_pawn_appraiser"/>
 
         <!-- Main Menus -->
         <menuitem id="menu_pawnshop_operations"

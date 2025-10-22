@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Dashboard Form View -->
+    <record id="view_pawn_dashboard_form" model="ir.ui.view">
+      <field name="name">pawn.dashboard.form</field>
+      <field name="model">pawn.dashboard</field>
+      <field name="arch" type="xml">
+        <form string="Pawnshop Dashboard">
+          <header>
+            <button name="action_open_tickets" type="object" string="Open Tickets" class="oe_highlight"/>
+            <button name="action_open_due_today" type="object" string="Due Today"/>
+            <button name="action_open_overdue" type="object" string="Overdue"/>
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="branch_id" options="{'no_open': True}"/>
+              </group>
+            </group>
+            <group>
+              <group string="Tickets">
+                <field name="active_tickets"/>
+                <field name="due_today"/>
+                <field name="in_grace"/>
+                <field name="overdue"/>
+                <field name="forfeited"/>
+              </group>
+              <group string="This Month">
+                <field name="principal_month"/>
+                <field name="interest_month"/>
+                <field name="currency_id" invisible="1"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Window Action to open the dashboard -->
+    <record id="action_pawn_dashboard" model="ir.actions.act_window">
+      <field name="name">Dashboard</field>
+      <field name="res_model">pawn.dashboard</field>
+      <field name="view_mode">form</field>
+      <field name="target">current</field>
+      <field name="context">{}</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">Pawnshop KPIs and quick links</p>
+      </field>
+    </record>
+
+  </data>
+</odoo>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!-- Server action to open a fresh transient dashboard record -->
+    <record id="action_open_pawn_dashboard" model="ir.actions.server">
+      <field name="name">Open Dashboard</field>
+      <field name="state">code</field>
+      <field name="model_id" ref="base.model_ir_actions_server"/>
+      <field name="code">
+        action = env.ref('pawnshop.action_pawn_dashboard').read()[0]\n
+        rec = env['pawn.dashboard'].create({})\n
+        action['res_id'] = rec.id\n
+        result = action
+      </field>
+    </record>
+  </data>
+</odoo>

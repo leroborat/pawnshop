@@ -8,3 +8,4 @@ from . import pawn_ticket_line
 from . import stock_move
 from . import account_move
 from . import pawn_loan_book_report
+from . import pawn_dashboard

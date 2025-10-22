@@ -53,6 +53,7 @@ Complete solution for pawnshop operations including:
         'views/pawn_branch_views.xml',
         'views/res_config_settings_views.xml',
         'views/pawn_operational_reports_views.xml',
+        'views/pawn_dashboard_views.xml',
         'views/pawn_menu.xml',
 
         # Reports (PDF)

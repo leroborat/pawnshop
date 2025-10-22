@@ -64,4 +64,9 @@ access_pawn_branch_kpi_manager,pawn.branch.kpi.manager,model_pawn_branch_kpi,gro
 access_pawn_branch_kpi_accountant,pawn.branch.kpi.accountant,model_pawn_branch_kpi,group_pawn_accountant,1,0,0,0
 access_pawn_branch_kpi_auditor,pawn.branch.kpi.auditor,model_pawn_branch_kpi,group_pawn_auditor,1,0,0,0
 access_pawn_branch_kpi_admin,pawn.branch.kpi.admin,model_pawn_branch_kpi,group_pawn_admin,1,0,0,0
-
+access_pawn_dashboard_cashier,pawn.dashboard.cashier,model_pawn_dashboard,group_pawn_cashier,1,0,0,0
+access_pawn_dashboard_appraiser,pawn.dashboard.appraiser,model_pawn_dashboard,group_pawn_appraiser,1,0,0,0
+access_pawn_dashboard_manager,pawn.dashboard.manager,model_pawn_dashboard,group_pawn_manager,1,0,0,0
+access_pawn_dashboard_accountant,pawn.dashboard.accountant,model_pawn_dashboard,group_pawn_accountant,1,0,0,0
+access_pawn_dashboard_auditor,pawn.dashboard.auditor,model_pawn_dashboard,group_pawn_auditor,1,0,0,0
+access_pawn_dashboard_admin,pawn.dashboard.admin,model_pawn_dashboard,group_pawn_admin,1,1,1,1
