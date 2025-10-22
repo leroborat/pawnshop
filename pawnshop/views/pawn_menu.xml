@@ -7,7 +7,7 @@
                   name="Pawnshop"
                   sequence="10"
                   web_icon="pawnshop,static/description/icon.png"
-                  action="action_pawn_dashboard"
+                  action="action_pawn_dashboard_client"
                   groups="group_pawn_cashier"/>
 
 

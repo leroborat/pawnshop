@@ -76,5 +76,13 @@ Complete solution for pawnshop operations including:
     'installable': True,
     'application': True,
     'auto_install': False,
+    'assets': {
+        'web.assets_backend': [
+            'web/static/lib/Chart/Chart.js',
+            'pawnshop/static/src/css/pawn_dashboard.css',
+            'pawnshop/static/src/js/pawn_dashboard.js',
+            'pawnshop/static/src/xml/pawn_dashboard.xml',
+        ],
+    },
 }
 

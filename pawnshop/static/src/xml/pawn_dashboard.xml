@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+  <t t-name="pawnshop.PawnDashboardTemplate">
+    <div class="o_pawn_dashboard container-fluid">
+      <t t-if="state.loading">
+        <div class="o_view_nocontent_smiling_face">Loading dashboard…</div>
+      </t>
+      <t t-else="">
+        <div class="o-section-title">
+          <h3 class="mb-0">Pawnshop Dashboard</h3>
+          <span class="subtitle">Key performance indicators</span>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card hoverable bg-soft-primary" role="button" t-on-click="openTickets">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">Active Tickets</span></div>
+                <div class="stat-value" t-esc="state.data.active_tickets"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card hoverable bg-soft-warning" role="button" t-on-click="openDueToday">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">Due Today</span></div>
+                <div class="stat-value" t-esc="state.data.due_today"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card hoverable bg-soft-danger" role="button" t-on-click="openOverdue">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">Overdue</span></div>
+                <div class="stat-value" t-esc="state.data.overdue"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-3">
+            <div class="card bg-soft-success">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">Forfeited</span></div>
+                <div class="stat-value" t-esc="state.data.forfeited"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-md-6">
+            <div class="card bg-soft-purple">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">This Month Principal</span></div>
+                <div class="stat-value" t-esc="state.data.principal_month"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="card bg-soft-purple">
+              <div class="card-body">
+                <div class="stat-header"><span class="text-muted">This Month Interest</span></div>
+                <div class="stat-value" t-esc="state.data.interest_month"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Insights -->
+        <div class="o-section-title">
+          <h5 class="mb-0">Insights</h5>
+          <span class="subtitle">Quick breakdowns</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-12 col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="fw-semibold">Loan Book Composition</div>
+                  <button class="btn btn-sm btn-link" t-on-click="openReportLoanBook">Open Report</button>
+                </div>
+                <canvas id="loanPie" height="160"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="fw-semibold">14-day Activity</div>
+                </div>
+                <canvas id="trendLine" height="160"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </t>
+    </div>
+  </t>
+</templates>

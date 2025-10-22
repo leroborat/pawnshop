@@ -82,3 +82,76 @@ class PawnDashboard(models.TransientModel):
             domain.append(("branch_id", "=", self.branch_id.id))
         action["domain"] = domain
         return action
+
+    @api.model
+    def get_metrics(self, branch_id=False):
+        Ticket = self.env["pawn.ticket"].sudo()
+        LoanBook = self.env["pawn.loan.book.report"].sudo()
+        AccountMove = self.env["account.move"].sudo()
+        today = fields.Date.context_today(self)
+        domain_ticket = []
+        if branch_id:
+            domain_ticket.append(("branch_id", "=", int(branch_id)))
+
+        # KPIs
+        active_tickets = Ticket.search_count(domain_ticket + [("state", "in", ["active", "renewed"])])
+        due_today = Ticket.search_count(domain_ticket + [("date_maturity", "=", today), ("state", "in", ["active", "renewed"])])
+        in_grace = Ticket.search_count(domain_ticket + [("state", "=", "active"), ("date_maturity", "<", today)])
+        overdue = Ticket.search_count(domain_ticket + [("state", "in", ["renewed", "active"]), ("date_maturity", "<", today)])
+        forfeited = Ticket.search_count(domain_ticket + [("state", "=", "forfeited")])
+
+        # Monthly sums (posted customer invoices linked to tickets)
+        first_day = today.replace(day=1)
+        inv_domain = [("move_type", "=", "out_invoice"), ("invoice_date", ">=", first_day), ("state", "=", "posted")]
+        if branch_id:
+            inv_domain.append(("pawn_ticket_id.branch_id", "=", int(branch_id)))
+        moves = AccountMove.search(inv_domain)
+        principal_month = sum(m.amount_untaxed for m in moves)
+        interest_month = sum(m.amount_tax for m in moves)
+
+        # Aging buckets composition (loan book report has 'aging_bucket')
+        buckets = ["current", "due_soon", "grace", "overdue", "matured"]
+        domain_lb = []
+        if branch_id:
+            domain_lb.append(("branch_id", "=", int(branch_id)))
+        bucket_counts = {b: LoanBook.search_count(domain_lb + [("aging_bucket", "=", b)]) for b in buckets}
+
+        # 14-day trends (tickets created, redeemed, renewed)
+        from datetime import timedelta
+        last_n = 14
+        label_dates = [today - timedelta(days=i) for i in range(last_n - 1, -1, -1)]
+        labels = [fields.Date.to_string(d) for d in label_dates]
+        date_to_label = {lbl: idx for idx, lbl in enumerate(labels)}
+
+        def _series(domain_extra, date_field):
+            dom = list(domain_ticket) + domain_extra + [(date_field, ">=", labels[0]), (date_field, "<=", labels[-1])]
+            groups = Ticket.read_group(dom, [], [f"{date_field}:day"])  # group only, count via __count
+            counts = [0] * len(labels)
+            for g in groups:
+                day = g.get(f"{date_field}:day")
+                lbl = day if isinstance(day, str) else fields.Date.to_string(day)
+                if lbl in date_to_label:
+                    counts[date_to_label[lbl]] = g.get("__count", 0)
+            return counts
+
+        created_series = _series([], "date_created")
+        redeemed_series = _series([("state", "=", "redeemed")], "date_redeemed")
+        renewed_series = _series([("state", "=", "renewed")], "date_maturity")  # proxy if you store renewal date elsewhere
+
+        return {
+            "active_tickets": active_tickets,
+            "due_today": due_today,
+            "in_grace": in_grace,
+            "overdue": overdue,
+            "forfeited": forfeited,
+            "principal_month": principal_month,
+            "interest_month": interest_month,
+            "loan_book_buckets": bucket_counts,
+            "today": fields.Date.to_string(today),
+            "trend": {
+                "labels": labels,
+                "created": created_series,
+                "redeemed": redeemed_series,
+                "renewed": renewed_series,
+            },
+        }
