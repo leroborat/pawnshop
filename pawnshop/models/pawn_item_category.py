@@ -14,6 +14,14 @@ class PawnItemCategory(models.Model):
     _order = 'sequence, name'
     _parent_name = 'parent_id'
     _parent_store = True
+    
+    # SQL Constraints (Odoo 19 syntax)
+    _constraints = [
+        models.Constraint('UNIQUE(code)', 'Category code must be unique!'),
+        models.Constraint('UNIQUE(name)', 'Category name must be unique!'),
+        models.Constraint('CHECK(default_loan_to_value_ratio >= 0 AND default_loan_to_value_ratio <= 100)', 
+                         'LTV ratio must be between 0 and 100!'),
+    ]
 
     # Basic Information
     name = fields.Char(
@@ -93,14 +101,6 @@ class PawnItemCategory(models.Model):
         compute='_compute_item_count',
         help="Number of items currently in this category"
     )
-
-    # SQL Constraints
-    _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'Category code must be unique!'),
-        ('name_unique', 'UNIQUE(name)', 'Category name must be unique!'),
-        ('ltv_ratio_check', 'CHECK(default_loan_to_value_ratio >= 0 AND default_loan_to_value_ratio <= 100)',
-         'LTV ratio must be between 0 and 100!'),
-    ]
 
     @api.constrains('parent_id')
     def _check_category_recursion(self):

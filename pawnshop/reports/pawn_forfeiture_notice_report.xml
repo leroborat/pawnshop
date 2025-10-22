@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Report Action -->
+        <record id="action_report_pawn_forfeiture_notice" model="ir.actions.report">
+            <field name="name">Forfeiture Notice</field>
+            <field name="model">pawn.ticket</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pawnshop.report_pawn_forfeiture_notice_document</field>
+            <field name="report_file">pawnshop.report_pawn_forfeiture_notice_document</field>
+            <field name="binding_model_id" ref="model_pawn_ticket"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'Forfeiture Notice - %s' % object.ticket_no</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_pawn_forfeiture_notice_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 8.5pt; line-height: 1.3;">
+                            <!-- Header -->
+                            <div class="text-center" style="margin-bottom: 10px;">
+                                <h2 class="text-danger" style="font-size: 15pt; font-weight: 600; margin-bottom: 3px;"><strong>NOTICE OF FORFEITURE</strong></h2>
+                                <p class="text-muted" style="font-size: 8pt; margin-bottom: 0;">Official Notice</p>
+                            </div>
+
+                            <!-- Notice Details -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-6">
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Notice Date:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/></p>
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Ticket No:</strong> <span t-field="o.ticket_no" class="text-primary"/></p>
+                                    <p style="margin-bottom: 0; font-size: 8.5pt;"><strong>Branch:</strong> <span t-field="o.branch_id.name"/></p>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <img t-att-src="'/report/barcode/QR/%s?width=90&amp;height=90' % o.ticket_no"
+                                         style="width:90px;height:90px;"/>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Customer Information -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 style="font-size: 9.5pt; font-weight: 600; margin-bottom: 3px;">To:</h5>
+                                    <p style="margin-left: 15px; margin-bottom: 0; font-size: 8.5pt;">
+                                        <strong><span t-field="o.customer_id.name"/></strong><br/>
+                                        <span t-field="o.customer_id.street"/><br/>
+                                        <span t-if="o.customer_id.city"><span t-field="o.customer_id.city"/>, </span>
+                                        <span t-if="o.customer_id.zip"><span t-field="o.customer_id.zip"/></span><br/>
+                                        Phone: <span t-field="o.customer_id.phone"/>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Notice Body -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 style="font-size: 9.5pt; font-weight: 600; margin-bottom: 3px;">Re: Forfeiture of Pledged Items</h5>
+                                    <p style="font-size: 8.5pt; margin-bottom: 4px;">Dear <span t-field="o.customer_id.name"/>,</p>
+
+                                    <p style="font-size: 8.5pt; margin-bottom: 6px;">This is to formally notify you that the items pledged under <strong>Pawn Ticket No. <span t-field="o.ticket_no"/></strong> have been forfeited in accordance with the terms and conditions of the pawn agreement.</p>
+
+                                    <h6 style="font-size: 9pt; font-weight: 600; margin-bottom: 2px;">Timeline:</h6>
+                                    <ul style="font-size: 8pt; margin-bottom: 6px; padding-left: 18px;">
+                                        <li style="margin-bottom: 2px;"><strong>Date Pledged:</strong> <span t-field="o.date_pledged" t-options="{'widget': 'date'}"/></li>
+                                        <li style="margin-bottom: 2px;"><strong>Original Maturity Date:</strong> <span t-field="o.date_maturity" t-options="{'widget': 'date'}"/></li>
+                                        <li style="margin-bottom: 2px;"><strong>Grace Period End Date:</strong> <span t-field="o.date_grace_end" t-options="{'widget': 'date'}"/></li>
+                                        <li style="margin-bottom: 0;"><strong>Date of Forfeiture:</strong> <span t-field="o.date_forfeited" t-options="{'widget': 'date'}"/></li>
+                                    </ul>
+
+                                    <p style="font-size: 8.5pt; margin-bottom: 0;">Despite multiple reminders and the expiration of the grace period, no payment or renewal was received. Therefore, ownership of the pledged items has been transferred to <span t-field="o.company_id.name"/> in full settlement of the outstanding loan.</p>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Forfeited Items -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 class="text-danger" style="font-size: 10pt; font-weight: 600; margin-bottom: 4px;">Forfeited Items</h5>
+                                    <table class="table table-bordered" style="font-size: 7.5pt; margin-bottom: 0;">
+                                        <thead style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th width="5%" style="padding: 3px 4px; font-size: 8pt;">#</th>
+                                                <th width="40%" style="padding: 3px 4px; font-size: 8pt;">Description</th>
+                                                <th width="20%" style="padding: 3px 4px; font-size: 8pt;">Brand/Model</th>
+                                                <th width="20%" style="padding: 3px 4px; font-size: 8pt;">Serial Number</th>
+                                                <th width="15%" class="text-end" style="padding: 3px 4px; font-size: 8pt;">Appraised Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.line_ids" t-as="line">
+                                                <td style="padding: 2px 4px;"><t t-esc="line_index + 1"/></td>
+                                                <td style="padding: 2px 4px;"><span t-field="line.name"/></td>
+                                                <td style="padding: 2px 4px;">
+                                                    <span t-field="line.brand"/>
+                                                    <span t-if="line.model"><br/><span t-field="line.model"/></span>
+                                                </td>
+                                                <td style="padding: 2px 4px; font-size: 7pt;"><span t-field="line.serial_number"/></td>
+                                                <td class="text-end" style="padding: 2px 4px;">
+                                                    <span t-field="line.appraised_value" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th colspan="4" class="text-end" style="padding: 4px 6px; font-size: 8.5pt;">Total Value:</th>
+                                                <th class="text-end" style="padding: 4px 6px; font-size: 8.5pt;">
+                                                    <span t-field="o.appraised_value" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Outstanding Amount -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 style="font-size: 9.5pt; font-weight: 600; margin-bottom: 4px;">Outstanding Loan Summary</h5>
+                                    <table class="table table-sm" style="max-width: 400px; font-size: 8pt; margin-bottom: 0;">
+                                        <tr>
+                                            <td style="padding: 2px 6px;">Principal Amount:</td>
+                                            <td class="text-end" style="padding: 2px 6px;">
+                                                <span t-field="o.principal_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 2px 6px;">Interest Due:</td>
+                                            <td class="text-end" style="padding: 2px 6px;">
+                                                <span t-field="o.interest_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 2px 6px;">Penalty Charges:</td>
+                                            <td class="text-end" style="padding: 2px 6px;">
+                                                <span t-field="o.penalty_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                        <tr class="table-danger">
+                                            <th style="padding: 4px 6px; font-size: 8.5pt;">Total Outstanding:</th>
+                                            <th class="text-end" style="padding: 4px 6px; font-size: 8.5pt;">
+                                                <span t-field="o.total_due" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Legal Notice -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <div class="alert alert-danger" style="padding: 8px 10px; margin-bottom: 0;">
+                                        <h6 style="font-size: 9pt; font-weight: 600; margin-bottom: 3px;"><strong>IMPORTANT LEGAL NOTICE</strong></h6>
+                                        <p style="font-size: 7.5pt; margin-bottom: 0; line-height: 1.2;">
+                                            This forfeiture is executed in accordance with applicable laws and the terms and conditions agreed upon at the time of pledging. The items will be held for a period of <strong>30 days</strong> from the date of this notice, after which they will be disposed of through public auction or private sale.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right to Redemption -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h6 style="font-size: 9pt; font-weight: 600; margin-bottom: 3px;">Right to Redemption (Limited Period)</h6>
+                                    <p style="font-size: 8pt; margin-bottom: 4px;">You still have the right to redeem your items within 30 days from the date of this notice by paying the full outstanding amount plus applicable storage fees. After this period, the items will be permanently forfeited and sold.</p>
+
+                                    <p style="font-size: 8pt; margin-bottom: 2px;"><strong>To redeem your items, please contact:</strong></p>
+                                    <ul style="font-size: 7.5pt; margin-bottom: 0; padding-left: 18px;">
+                                        <li style="margin-bottom: 2px;">Branch: <span t-field="o.branch_id.name"/></li>
+                                        <li style="margin-bottom: 2px;">Phone: <span t-field="o.branch_id.phone"/></li>
+                                        <li style="margin-bottom: 0;">Address: <span t-field="o.branch_id.street"/></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Authorized By -->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-12 text-end">
+                                    <p style="font-size: 8.5pt; margin-bottom: 2px;">Respectfully,</p>
+                                    <div style="border-top: 1px solid #000; display: inline-block; padding: 3px 40px; margin-top: 25px;">
+                                        <span style="font-size: 7.5pt;">Authorized Signature</span>
+                                    </div>
+                                    <p style="font-size: 8pt; margin-top: 4px; margin-bottom: 1px;"><strong><span t-field="o.branch_id.manager_id.name" t-if="o.branch_id.manager_id"/></strong></p>
+                                    <p style="font-size: 7.5pt; margin-bottom: 1px;">Branch Manager</p>
+                                    <p style="font-size: 7.5pt; margin-bottom: 0;"><span t-field="o.branch_id.name"/></p>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-12 text-center text-muted">
+                                    <small style="font-size: 7pt;">
+                                        <strong>OFFICIAL NOTICE</strong> - Keep for your records<br/>
+                                        <span t-field="o.company_id.name"/> | <span t-field="o.branch_id.phone"/>
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

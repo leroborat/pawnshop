@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ========================================== -->
+        <!-- LOAN BOOK & AGING REPORT -->
+        <!-- ========================================== -->
+
+        <!-- Tree View -->
+        <record id="view_pawn_loan_book_report_tree" model="ir.ui.view">
+            <field name="name">pawn.loan.book.report.tree</field>
+            <field name="model">pawn.loan.book.report</field>
+            <field name="arch" type="xml">
+                <list string="Loan Book &amp; Aging" decoration-danger="aging_bucket == 'overdue'" 
+                      decoration-warning="aging_bucket == 'grace'" decoration-info="aging_bucket == 'due_soon'">
+                    <field name="ticket_no"/>
+                    <field name="branch_id"/>
+                    <field name="customer_id"/>
+                    <field name="date_pledged"/>
+                    <field name="date_maturity"/>
+                    <field name="principal_amount" sum="Total Principal"/>
+                    <field name="total_due" sum="Total Due"/>
+                    <field name="aging_bucket"/>
+                    <field name="days_to_maturity"/>
+                    <field name="days_overdue"/>
+                    <field name="item_count" sum="Total Items"/>
+                    <field name="state"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_pawn_loan_book_report_search" model="ir.ui.view">
+    <field name="name">pawn.loan.book.report.search</field>
+    <field name="model">pawn.loan.book.report</field>
+    <field name="arch" type="xml">
+        <search string="Loan Book and Aging">
+            <field name="ticket_no"/>
+            <field name="customer_id"/>
+            <field name="branch_id"/>
+
+            <filter string="Current"      name="filter_current"   domain="[('aging_bucket', '=', 'current')]"/>
+            <filter string="Due Soon"     name="filter_due_soon"  domain="[('aging_bucket', '=', 'due_soon')]"/>
+            <filter string="Matured"      name="filter_matured"   domain="[('aging_bucket', '=', 'matured')]"/>
+            <filter string="Grace Period" name="filter_grace"     domain="[('aging_bucket', '=', 'grace')]"/>
+            <filter string="Overdue"      name="filter_overdue"   domain="[('aging_bucket', '=', 'overdue')]"/>
+            <filter string="Active"       name="filter_active"    domain="[('state', '=', 'active')]"/>
+            <filter string="Renewed"      name="filter_renewed"   domain="[('state', '=', 'renewed')]"/>
+
+            <group>
+                <filter string="Branch"        name="group_branch"   context="{'group_by': 'branch_id'}"/>
+                <filter string="Aging Bucket"  name="group_aging"    context="{'group_by': 'aging_bucket'}"/>
+                <filter string="Status"        name="group_state"    context="{'group_by': 'state'}"/>
+                <filter string="Maturity Date" name="group_maturity" context="{'group_by': 'date_maturity'}"/>
+            </group>
+        </search>
+    </field>
+</record>
+
+
+
+        <!-- Pivot View -->
+        <record id="view_pawn_loan_book_report_pivot" model="ir.ui.view">
+            <field name="name">pawn.loan.book.report.pivot</field>
+            <field name="model">pawn.loan.book.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Loan Book Analysis">
+                    <field name="branch_id" type="row"/>
+                    <field name="aging_bucket" type="col"/>
+                    <field name="principal_amount" type="measure"/>
+                    <field name="total_due" type="measure"/>
+                    <field name="item_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pawn_loan_book_report_graph" model="ir.ui.view">
+            <field name="name">pawn.loan.book.report.graph</field>
+            <field name="model">pawn.loan.book.report</field>
+            <field name="arch" type="xml">
+                <graph string="Loan Book Analysis" type="bar" stacked="True">
+                    <field name="aging_bucket"/>
+                    <field name="total_due" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pawn_loan_book_report" model="ir.actions.act_window">
+            <field name="name">Loan Book &amp; Aging</field>
+            <field name="res_model">pawn.loan.book.report</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="search_view_id" ref="view_pawn_loan_book_report_search"/>
+            <field name="context">{'search_default_filter_overdue': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No active loans found
+                </p>
+                <p>
+                    This report shows all active loans with aging analysis.
+                </p>
+            </field>
+        </record>
+
+
+        <!-- ========================================== -->
+        <!-- INTEREST & PENALTY SUMMARY -->
+        <!-- ========================================== -->
+
+        <!-- Tree View -->
+        <record id="view_pawn_interest_penalty_summary_tree" model="ir.ui.view">
+            <field name="name">pawn.interest.penalty.summary.tree</field>
+            <field name="model">pawn.interest.penalty.summary</field>
+            <field name="arch" type="xml">
+                <list string="Interest &amp; Penalty Summary">
+                    <field name="date"/>
+                    <field name="branch_id"/>
+                    <field name="cashier_id"/>
+                    <field name="renewal_count" sum="Total Renewals"/>
+                    <field name="redemption_count" sum="Total Redemptions"/>
+                    <field name="interest_collected" sum="Total Interest"/>
+                    <field name="penalty_collected" sum="Total Penalties"/>
+                    <field name="service_fee_collected" sum="Total Service Fees"/>
+                    <field name="total_collected" sum="Grand Total"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+       <record id="view_pawn_interest_penalty_summary_search" model="ir.ui.view">
+  <field name="name">pawn.interest.penalty.summary.search</field>
+  <field name="model">pawn.interest.penalty.summary</field>
+  <field name="arch" type="xml">
+    <search string="Interest and Penalty Summary">
+      <field name="branch_id"/>
+      <field name="cashier_id"/>
+      <field name="date"/>
+
+      <!-- Date quick filters: explicit domains -->
+      <!-- This Month: [first day of this month, first day of next month) -->
+      <filter string="This Month" name="filter_month" date="date"/>
+
+      <!-- Last Month: [first day of last month, first day of this month) -->
+      <filter string="Last Month" name="filter_last_month" date="date"/>
+
+      <!-- This Year: [Jan 1 this year, Jan 1 next year) -->
+      <filter string="This Year" name="filter_year" date="date"/>
+
+      <!-- Group By (no attributes on <group> in v19) -->
+      <group>
+        <filter string="Branch"  name="group_branch"  context="{'group_by': 'branch_id'}"/>
+        <filter string="Cashier" name="group_cashier" context="{'group_by': 'cashier_id'}"/>
+        <filter string="Date"    name="group_date"    context="{'group_by': 'date'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+
+
+
+        <!-- Pivot View -->
+        <record id="view_pawn_interest_penalty_summary_pivot" model="ir.ui.view">
+            <field name="name">pawn.interest.penalty.summary.pivot</field>
+            <field name="model">pawn.interest.penalty.summary</field>
+            <field name="arch" type="xml">
+                <pivot string="Interest &amp; Penalty Analysis">
+                    <field name="date" interval="month" type="row"/>
+                    <field name="branch_id" type="col"/>
+                    <field name="interest_collected" type="measure"/>
+                    <field name="penalty_collected" type="measure"/>
+                    <field name="total_collected" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pawn_interest_penalty_summary_graph" model="ir.ui.view">
+            <field name="name">pawn.interest.penalty.summary.graph</field>
+            <field name="model">pawn.interest.penalty.summary</field>
+            <field name="arch" type="xml">
+                <graph string="Revenue Analysis" type="line">
+                    <field name="date" interval="day"/>
+                    <field name="total_collected" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pawn_interest_penalty_summary" model="ir.actions.act_window">
+            <field name="name">Interest &amp; Penalty Summary</field>
+            <field name="res_model">pawn.interest.penalty.summary</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="search_view_id" ref="view_pawn_interest_penalty_summary_search"/>
+            <field name="context">{'search_default_filter_month': 1, 'search_default_group_branch': 1}</field>
+        </record>
+
+
+        <!-- ========================================== -->
+        <!-- TICKET REGISTER -->
+        <!-- ========================================== -->
+
+        <!-- Tree View -->
+        <record id="view_pawn_ticket_register_tree" model="ir.ui.view">
+            <field name="name">pawn.ticket.register.tree</field>
+            <field name="model">pawn.ticket.register</field>
+            <field name="arch" type="xml">
+                <list string="Ticket Register" decoration-success="state == 'redeemed'" 
+                      decoration-muted="state == 'cancelled'" decoration-danger="state == 'forfeited'">
+                    <field name="ticket_no"/>
+                    <field name="date_created"/>
+                    <field name="branch_id"/>
+                    <field name="customer_id"/>
+                    <field name="customer_phone"/>
+                    <field name="date_pledged"/>
+                    <field name="date_maturity"/>
+                    <field name="date_redeemed"/>
+                    <field name="principal_amount" sum="Total Principal"/>
+                    <field name="appraised_value" sum="Total Appraised"/>
+                    <field name="item_count" sum="Total Items"/>
+                    <field name="state"/>
+                    <field name="created_by"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_pawn_ticket_register_search" model="ir.ui.view">
+  <field name="name">pawn.ticket.register.search</field>
+  <field name="model">pawn.ticket.register</field>
+  <field name="arch" type="xml">
+    <search string="Ticket Register">
+      <field name="ticket_no"/>
+      <field name="customer_id"/>
+      <field name="branch_id"/>
+      <field name="created_by"/>
+
+      <!-- Status filters -->
+      <filter string="Draft"     name="filter_draft"     domain="[('state', '=', 'draft')]"/>
+      <filter string="Active"    name="filter_active"    domain="[('state', '=', 'active')]"/>
+      <filter string="Renewed"   name="filter_renewed"   domain="[('state', '=', 'renewed')]"/>
+      <filter string="Redeemed"  name="filter_redeemed"  domain="[('state', '=', 'redeemed')]"/>
+      <filter string="Forfeited" name="filter_forfeited" domain="[('state', '=', 'forfeited')]"/>
+
+      <!-- Date quick filters on date_created -->
+      <!-- This Month: [1st of this month, 1st of next month) -->
+      <filter string="This Month" name="filter_month" date="date_created"/>
+
+      <!-- Last Month: [1st of last month, 1st of this month) -->
+      <filter string="Last Month" name="filter_last_month" date="date_created"/>
+
+      <!-- This Year: [Jan 1 this year, Jan 1 next year) -->
+      <filter string="This Year" name="filter_year" date="date_created"/>
+
+      <!-- Group By (no attributes on <group> in v19) -->
+      <group>
+        <filter string="Branch"      name="group_branch"      context="{'group_by': 'branch_id'}"/>
+        <filter string="Status"      name="group_state"       context="{'group_by': 'state'}"/>
+        <filter string="Created By"  name="group_created_by"  context="{'group_by': 'created_by'}"/>
+        <filter string="Date Created" name="group_date_created" context="{'group_by': 'date_created'}"/>
+        <!-- If you want month buckets: context="{'group_by': 'date_created:month'}" -->
+      </group>
+    </search>
+  </field>
+</record>
+
+
+        <!-- Action -->
+        <record id="action_pawn_ticket_register" model="ir.actions.act_window">
+            <field name="name">Ticket Register</field>
+            <field name="res_model">pawn.ticket.register</field>
+            <field name="view_mode">list</field>
+            <field name="search_view_id" ref="view_pawn_ticket_register_search"/>
+            <field name="context">{'search_default_filter_month': 1}</field>
+        </record>
+
+
+        <!-- ========================================== -->
+        <!-- INVENTORY REPORT -->
+        <!-- ========================================== -->
+
+        <!-- Tree View -->
+        <record id="view_pawn_inventory_report_tree" model="ir.ui.view">
+            <field name="name">pawn.inventory.report.tree</field>
+            <field name="model">pawn.inventory.report</field>
+            <field name="arch" type="xml">
+                <list string="Inventory Report">
+                    <field name="branch_id"/>
+                    <field name="category_id"/>
+                    <field name="status"/>
+                    <field name="item_count" sum="Total Items"/>
+                    <field name="total_appraised_value" sum="Total Value"/>
+                    <field name="total_principal" sum="Total Principal"/>
+                    <field name="avg_days_in_custody"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+      <record id="view_pawn_inventory_report_search" model="ir.ui.view">
+  <field name="name">pawn.inventory.report.search</field>
+  <field name="model">pawn.inventory.report</field>
+  <field name="arch" type="xml">
+    <search string="Inventory Report">
+      <field name="branch_id"/>
+      <field name="category_id"/>
+
+      <!-- Status filters -->
+      <filter string="In Custody" name="filter_custody"   domain="[('status', '=', 'custody')]"/>
+      <filter string="Forfeited"  name="filter_forfeited" domain="[('status', '=', 'forfeited')]"/>
+      <filter string="Released"   name="filter_released"  domain="[('status', '=', 'released')]"/>
+
+      <!-- Group By (no attributes on <group> in v19) -->
+      <group>
+        <filter string="Branch"   name="group_branch"   context="{'group_by': 'branch_id'}"/>
+        <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+        <filter string="Status"   name="group_status"   context="{'group_by': 'status'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+
+        <!-- Pivot View -->
+        <record id="view_pawn_inventory_report_pivot" model="ir.ui.view">
+            <field name="name">pawn.inventory.report.pivot</field>
+            <field name="model">pawn.inventory.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Inventory Analysis">
+                    <field name="branch_id" type="row"/>
+                    <field name="status" type="col"/>
+                    <field name="item_count" type="measure"/>
+                    <field name="total_appraised_value" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pawn_inventory_report_graph" model="ir.ui.view">
+            <field name="name">pawn.inventory.report.graph</field>
+            <field name="model">pawn.inventory.report</field>
+            <field name="arch" type="xml">
+                <graph string="Inventory by Category" type="pie">
+                    <field name="category_id"/>
+                    <field name="item_count" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pawn_inventory_report" model="ir.actions.act_window">
+            <field name="name">Inventory Report</field>
+            <field name="res_model">pawn.inventory.report</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="search_view_id" ref="view_pawn_inventory_report_search"/>
+            <field name="context">{'search_default_filter_custody': 1, 'search_default_group_branch': 1}</field>
+        </record>
+
+
+        <!-- ========================================== -->
+        <!-- BRANCH KPI REPORT -->
+        <!-- ========================================== -->
+
+        <!-- Tree View -->
+        <record id="view_pawn_branch_kpi_tree" model="ir.ui.view">
+            <field name="name">pawn.branch.kpi.tree</field>
+            <field name="model">pawn.branch.kpi</field>
+            <field name="arch" type="xml">
+                <list string="Branch KPI">
+                    <field name="branch_id"/>
+                    <field name="period_start"/>
+                    <field name="period_end"/>
+                    <field name="new_tickets" sum="Total New"/>
+                    <field name="renewed_tickets" sum="Total Renewed"/>
+                    <field name="redeemed_tickets" sum="Total Redeemed"/>
+                    <field name="forfeited_tickets" sum="Total Forfeited"/>
+                    <field name="total_principal_disbursed" sum="Total Principal"/>
+                    <field name="total_interest_collected" sum="Total Interest"/>
+                    <field name="redemption_rate" avg="Avg Redemption Rate"/>
+                    <field name="forfeiture_rate" avg="Avg Forfeiture Rate"/>
+                    <field name="avg_ticket_size"/>
+                    <field name="avg_days_to_redemption"/>
+                    <field name="currency_id" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_pawn_branch_kpi_search" model="ir.ui.view">
+  <field name="name">pawn.branch.kpi.search</field>
+  <field name="model">pawn.branch.kpi</field>
+  <field name="arch" type="xml">
+    <search string="Branch KPI">
+      <field name="branch_id"/>
+
+      <filter string="Period" name="filter_period" date="period_start"/>
+
+      <!-- Group By -->
+      <group>
+        <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+        <filter string="Period" name="group_period" context="{'group_by': 'period_start'}"/>
+      </group>
+    </search>
+  </field>
+</record>
+
+
+        <!-- Pivot View -->
+        <record id="view_pawn_branch_kpi_pivot" model="ir.ui.view">
+            <field name="name">pawn.branch.kpi.pivot</field>
+            <field name="model">pawn.branch.kpi</field>
+            <field name="arch" type="xml">
+                <pivot string="Branch KPI Analysis">
+                    <field name="branch_id" type="row"/>
+                    <field name="period_start" interval="month" type="col"/>
+                    <field name="new_tickets" type="measure"/>
+                    <field name="redemption_rate" type="measure"/>
+                    <field name="total_interest_collected" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_pawn_branch_kpi_graph" model="ir.ui.view">
+            <field name="name">pawn.branch.kpi.graph</field>
+            <field name="model">pawn.branch.kpi</field>
+            <field name="arch" type="xml">
+                <graph string="Branch Performance" type="line">
+                    <field name="period_start" interval="month"/>
+                    <field name="redemption_rate" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pawn_branch_kpi" model="ir.actions.act_window">
+            <field name="name">Branch KPI</field>
+            <field name="res_model">pawn.branch.kpi</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="search_view_id" ref="view_pawn_branch_kpi_search"/>
+            <field name="context">{'search_default_filter_year': 1, 'search_default_group_branch': 1}</field>
+        </record>
+
+    </data>
+</odoo>

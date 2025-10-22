@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Report Action -->
+        <record id="action_report_pawn_ticket" model="ir.actions.report">
+            <field name="name">Pawn Ticket</field>
+            <field name="model">pawn.ticket</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pawnshop.report_pawn_ticket_document</field>
+            <field name="report_file">pawnshop.report_pawn_ticket_document</field>
+            <field name="binding_model_id" ref="model_pawn_ticket"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'Pawn Ticket - %s' % object.ticket_no</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_pawn_ticket_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 9pt; line-height: 1.3;">
+                            <!-- Header with Company Logo and QR -->
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-8">
+                                    <h1 class="text-uppercase" style="color: #2c3e50; font-weight: 600; font-size: 16pt; margin-bottom: 6px;">
+                                        <i class="fa fa-certificate" style="font-size: 14pt;"/> PAWN TICKET
+                                    </h1>
+                                    <h3 class="text-primary" style="font-weight: 600; font-size: 12pt; letter-spacing: 0.5px; margin-bottom: 4px;">
+                                        <span t-field="o.ticket_no"/>
+                                    </h3>
+                                    <p class="text-muted" style="margin-bottom: 0; font-size: 8pt;">
+                                        <i class="fa fa-calendar" style="font-size: 7pt;"/> Created: <span t-field="o.date_created" t-options="{'widget': 'datetime', 'format': 'MMM dd, yyyy HH:mm'}"/>
+                                    </p>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <!-- QR Code with border -->
+                                    <div style="border: 2px solid #3498db; padding: 6px; display: inline-block; background: white;">
+                                        <img t-att-src="'/report/barcode/QR/%s?width=90&amp;height=90' % o.ticket_no"
+                                             style="width:90px;height:90px;"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Important Dates Box -->
+                            <div class="alert alert-warning" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 8px 10px; margin-bottom: 8px; font-size: 8.5pt;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><strong><i class="fa fa-map-marker" style="font-size: 7pt;"/> Branch:</strong> <span t-field="o.branch_id.name"/></p>
+                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><i class="fa fa-phone" style="font-size: 7pt;"/> <span t-field="o.branch_id.phone"/></p>
+                                        <p style="margin-bottom: 0; font-size: 7.5pt;" class="text-muted"><span t-field="o.branch_id.street"/></p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><strong><i class="fa fa-calendar-check-o" style="font-size: 7pt;"/> Date Pledged:</strong> <span t-field="o.date_pledged" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/></p>
+                                        <p style="margin-bottom: 0; font-size: 8.5pt;"><strong style="color: #d9534f;"><i class="fa fa-exclamation-triangle" style="font-size: 7pt;"/> MATURITY DATE:</strong>
+                                            <span t-field="o.date_maturity" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}" style="color: #d9534f; font-weight: 600; font-size: 9.5pt;"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Information Card -->
+                            <div class="card" style="border: 1px solid #ddd; margin-bottom: 8px;">
+                                <div class="card-header" style="background-color: #3498db; color: white; padding: 6px 10px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9.5pt; font-weight: 600;"><i class="fa fa-user" style="font-size: 8pt;"/> Customer Information</h5>
+                                </div>
+                                <div class="card-body" style="padding: 8px 10px;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 8pt;">
+                                                <tr>
+                                                    <td width="30%" style="padding: 2px 4px;"><strong>Name:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.customer_id.name"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 2px 4px;"><strong>Phone:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.customer_id.phone"/></td>
+                                                </tr>
+                                                <tr t-if="o.customer_id.email">
+                                                    <td style="padding: 2px 4px;"><strong>Email:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.customer_id.email"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 2px 4px;"><strong>Address:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.customer_id.street"/></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-6" t-if="o.kyc_id_type">
+                                            <table class="table table-sm table-borderless" style="font-size: 8pt;">
+                                                <tr>
+                                                    <td width="35%" style="padding: 2px 4px;"><strong>ID Type:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.kyc_id_type"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 2px 4px;"><strong>ID Number:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.kyc_id_number"/></td>
+                                                </tr>
+                                                <tr t-if="o.kyc_id_expiry">
+                                                    <td style="padding: 2px 4px;"><strong>ID Expiry:</strong></td>
+                                                    <td style="padding: 2px 4px;"><span t-field="o.kyc_id_expiry" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pawned Items Card -->
+                            <div class="card" style="border: 1px solid #ddd; margin-bottom: 8px;">
+                                <div class="card-header" style="background-color: #27ae60; color: white; padding: 6px 10px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9.5pt; font-weight: 600;"><i class="fa fa-list" style="font-size: 8pt;"/> Pawned Items (<t t-esc="len(o.line_ids)"/> items)</h5>
+                                </div>
+                                <div class="card-body" style="padding: 0;">
+                                    <table class="table table-sm table-bordered" style="margin-bottom: 0; font-size: 7.5pt;">
+                                        <thead style="background-color: #ecf0f1;">
+                                            <tr>
+                                                <th width="5%" style="padding: 3px 4px; font-size: 8pt;">#</th>
+                                                <th width="30%" style="padding: 3px 4px; font-size: 8pt;">Description</th>
+                                                <th width="15%" style="padding: 3px 4px; font-size: 8pt;">Category</th>
+                                                <th width="20%" style="padding: 3px 4px; font-size: 8pt;">Brand/Model</th>
+                                                <th width="15%" style="padding: 3px 4px; font-size: 8pt;">Serial No.</th>
+                                                <th width="15%" class="text-end" style="padding: 3px 4px; font-size: 8pt;">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.line_ids" t-as="line">
+                                                <td class="text-center" style="padding: 2px 4px;"><strong><t t-esc="line_index + 1"/></strong></td>
+                                                <td style="padding: 2px 4px;"><span t-field="line.name"/></td>
+                                                <td style="padding: 2px 4px;"><span class="badge" style="background-color: #95a5a6; font-size: 6.5pt; padding: 2px 5px;"><span t-field="line.category_id.name"/></span></td>
+                                                <td style="padding: 2px 4px;">
+                                                    <span t-field="line.brand"/>
+                                                    <span t-if="line.model"><br/><span class="text-muted" style="font-size: 7pt;"><span t-field="line.model"/></span></span>
+                                                </td>
+                                                <td style="padding: 2px 4px; font-size: 7pt;"><span t-field="line.serial_number"/></td>
+                                                <td class="text-end" style="padding: 2px 4px;">
+                                                    <strong><span t-field="line.appraised_value" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot style="background-color: #d5dbdb;">
+                                            <tr>
+                                                <th colspan="5" class="text-end" style="padding: 6px 8px; font-size: 8.5pt;">Total Appraised Value:</th>
+                                                <th class="text-end" style="padding: 6px 8px;">
+                                                    <strong style="font-size: 10pt;"><span t-field="o.appraised_value" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong>
+                                                </th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Loan Details - Highlighted Box -->
+                            <div class="card" style="border: 2px solid #e74c3c; margin-bottom: 8px;">
+                                <div class="card-header" style="background-color: #e74c3c; color: white; padding: 6px 10px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9.5pt; font-weight: 600;"><i class="fa fa-money" style="font-size: 8pt;"/> Loan Details</h5>
+                                </div>
+                                <div class="card-body" style="padding: 8px 10px;">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <table class="table table-sm table-borderless" style="font-size: 8pt;">
+                                                <tr style="border-bottom: 1px solid #ecf0f1;">
+                                                    <td width="50%" style="padding: 3px 4px;"><strong>Principal Amount:</strong></td>
+                                                    <td class="text-end" style="padding: 3px 4px;">
+                                                        <strong style="font-size: 13pt; color: #27ae60;">
+                                                            <span t-field="o.principal_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 4px;"><strong>Interest Rate:</strong></td>
+                                                    <td class="text-end" style="padding: 3px 4px;"><span t-field="o.interest_rate"/>% per month</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 4px;"><strong>Interest (1 month):</strong></td>
+                                                    <td class="text-end" style="padding: 3px 4px;">
+                                                        <span t-field="o.interest_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                    </td>
+                                                </tr>
+                                                <tr t-if="o.service_fee > 0">
+                                                    <td style="padding: 3px 4px;"><strong>Service Fee:</strong></td>
+                                                    <td class="text-end" style="padding: 3px 4px;">
+                                                        <span t-field="o.service_fee" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-5">
+                                            <div class="alert alert-danger text-center" style="border: 2px solid #c0392b; margin-bottom: 0; padding: 8px;">
+                                                <p style="margin-bottom: 3px; font-size: 8.5pt; font-weight: 600;">TOTAL DUE AT MATURITY</p>
+                                                <strong style="font-size: 12pt; color: #c0392b; display: block; margin-bottom: 4px;">
+                                                    <span t-field="o.total_due" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </strong>
+                                                <hr style="border-top: 1px solid #c0392b; margin: 4px 0;"/>
+                                                <p style="margin-bottom: 2px; font-size: 8pt; font-weight: 600;">DUE ON:</p>
+                                                <strong style="font-size: 10pt; color: #c0392b;">
+                                                    <span t-field="o.date_maturity" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/>
+                                                </strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Disbursement Info -->
+                            <div class="row" style="margin-bottom: 8px;" t-if="o.disbursement_date">
+                                <div class="col-12">
+                                    <div class="alert alert-success" style="padding: 6px 10px; font-size: 8pt; margin-bottom: 0;">
+                                        <strong>Disbursed:</strong>
+                                        <span t-field="o.principal_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                        via <span t-field="o.disbursement_method"/>
+                                        <span t-if="o.disbursement_reference"> (Ref: <span t-field="o.disbursement_reference"/>)</span>
+                                        on <span t-field="o.disbursement_date" t-options="{'widget': 'datetime'}"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Terms and Conditions - Compact -->
+                            <div class="card" style="border: 1px solid #bdc3c7; margin-bottom: 8px;">
+                                <div class="card-header" style="background-color: #95a5a6; color: white; padding: 5px 10px;">
+                                    <h6 style="margin-bottom: 0; font-size: 9pt; font-weight: 600;"><i class="fa fa-file-text-o" style="font-size: 7.5pt;"/> Terms and Conditions</h6>
+                                </div>
+                                <div class="card-body" style="font-size: 6.5pt; padding: 8px; line-height: 1.2;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <ol style="margin-bottom: 0; padding-left: 12px;">
+                                                <li style="margin-bottom: 2px;">This pawn ticket must be presented upon redemption or renewal.</li>
+                                                <li style="margin-bottom: 2px;">Interest is charged monthly from the date of pledge.</li>
+                                                <li style="margin-bottom: 2px;">Items may be redeemed or renewed on or before maturity date.</li>
+                                                <li style="margin-bottom: 2px;">Grace period: <strong><t t-esc="request.env['ir.config_parameter'].sudo().get_param('pawnshop.grace_period_days', '7')"/> days</strong> after maturity with penalties.</li>
+                                                <li style="margin-bottom: 2px;">Failure to redeem/renew within grace period = forfeiture.</li>
+                                            </ol>
+                                        </div>
+                                        <div class="col-6">
+                                            <ol start="6" style="margin-bottom: 0; padding-left: 12px;">
+                                                <li style="margin-bottom: 2px;">Lost tickets must be reported immediately.</li>
+                                                <li style="margin-bottom: 2px;">Company may dispose forfeited items via auction/sale.</li>
+                                                <li style="margin-bottom: 2px;">Items insured while in custody (T&amp;C apply).</li>
+                                                <li style="margin-bottom: 2px;">Customer certifies items are owned, not stolen.</li>
+                                                <li style="margin-bottom: 2px;">Disputes subject to local court jurisdiction.</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Signatures -->
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div style="border-bottom: 1px solid #000; width: 70%; display: inline-block; margin-bottom: 4px; height: 35px;"></div>
+                                        <p style="margin-bottom: 0; font-size: 8pt;"><strong>CUSTOMER SIGNATURE</strong></p>
+                                        <p style="font-size: 7pt; margin-bottom: 0;" class="text-muted">Date: _______________</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div style="border-bottom: 1px solid #000; width: 70%; display: inline-block; margin-bottom: 4px; height: 35px;"></div>
+                                        <p style="margin-bottom: 0; font-size: 8pt;"><strong>AUTHORIZED REPRESENTATIVE</strong></p>
+                                        <p style="font-size: 7.5pt; margin-bottom: 0;"><span t-field="o.create_uid.name"/></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Note -->
+                            <div class="text-center" style="border-top: 1px solid #3498db; padding-top: 8px; margin-top: 10px;">
+                                <p class="text-muted" style="margin-bottom: 2px; font-size: 8pt;">
+                                    <strong><i class="fa fa-shield" style="font-size: 7pt;"/> This is an official pawn ticket. Keep in a safe place.</strong>
+                                </p>
+                                <p class="text-muted" style="font-size: 7pt; margin-bottom: 0;">For inquiries: <span t-field="o.branch_id.phone"/> | <span t-field="o.branch_id.email"/></p>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

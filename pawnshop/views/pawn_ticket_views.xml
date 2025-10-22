@@ -36,11 +36,11 @@
                                 class="oe_highlight"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_renew" string="Renew" type="object"
-                                invisible="1"
+                                invisible="state not in ('pledged', 'renewed')"
                                 class="btn-primary"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_redeem" string="Redeem" type="object"
-                                invisible="1"
+                                invisible="state not in ('pledged', 'renewed')"
                                 class="btn-success"
                                 groups="pawnshop.group_pawn_cashier"/>
                         <button name="action_create_renewal_invoice" string="Create Renewal Invoice" type="object"

@@ -25,4 +25,4 @@ class AccountMove(models.Model):
         ],
         string='Payment Method'
     )
-    x_payment_ref = fields.Char(string='Payment Reference')
+    x_payment_ref = fields.Char(string='Payment Ref. Number')

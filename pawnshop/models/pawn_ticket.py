@@ -597,7 +597,15 @@ class PawnTicket(models.Model):
                 if branch and branch.ticket_sequence_id:
                     vals['ticket_no'] = branch.ticket_sequence_id.next_by_id()
                 else:
-                    raise UserError(_('Please configure ticket sequence for branch %s') % branch.name)
+                    # Fallback to global sequence
+                    try:
+                        seq = self.env.ref('pawnshop.seq_pawn_ticket')
+                    except ValueError:
+                        seq = False
+                    if seq:
+                        vals['ticket_no'] = seq.next_by_id()
+                    else:
+                        raise UserError(_('No ticket sequence configured. Please set a branch sequence or ensure global sequence exists.'))
         return super().create(vals_list)
 
     # ============================================================
@@ -668,15 +676,33 @@ class PawnTicket(models.Model):
 
     def action_renew(self):
         """Renew ticket - extends maturity date"""
-        # Phase 5: Wizard deferred. Provide clear user feedback instead of opening non-existent model.
         self.ensure_one()
-        raise UserError(_('Renew wizard is not yet available. This will be implemented in Phase 5.'))
+        action = self.env.ref('pawnshop.action_pawn_renew_wizard').read()[0]
+        ctx = action.get('context') or {}
+        if isinstance(ctx, str):
+            from ast import literal_eval
+            try:
+                ctx = literal_eval(ctx)
+            except Exception:
+                ctx = {}
+        ctx['active_id'] = self.id
+        action['context'] = ctx
+        return action
 
     def action_redeem(self):
         """Redeem ticket - customer pays and retrieves items"""
-        # Phase 5: Wizard deferred. Provide clear user feedback instead of opening non-existent model.
         self.ensure_one()
-        raise UserError(_('Redemption wizard is not yet available. This will be implemented in Phase 5.'))
+        action = self.env.ref('pawnshop.action_pawn_redeem_wizard').read()[0]
+        ctx = action.get('context') or {}
+        if isinstance(ctx, str):
+            from ast import literal_eval
+            try:
+                ctx = literal_eval(ctx)
+            except Exception:
+                ctx = {}
+        ctx['active_id'] = self.id
+        action['context'] = ctx
+        return action
 
     def action_forfeit(self):
         """Forfeit ticket - items become company property"""

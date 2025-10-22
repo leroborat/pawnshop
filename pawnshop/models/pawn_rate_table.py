@@ -12,6 +12,11 @@ class PawnRateTable(models.Model):
     _name = 'pawn.rate.table'
     _description = 'Pawn Rate Table'
     _order = 'sequence, name'
+    
+    # SQL Constraints (Odoo 19 syntax)
+    _constraints = [
+        models.Constraint('UNIQUE(code, company_id)', 'Rate table code must be unique per company!'),
+    ]
 
     # Basic Information
     name = fields.Char(
@@ -74,11 +79,6 @@ class PawnRateTable(models.Model):
         help="Additional information about this rate table"
     )
 
-    # SQL Constraints
-    _sql_constraints = [
-        ('code_unique', 'UNIQUE(code, company_id)', 'Rate table code must be unique per company!'),
-    ]
-
     @api.constrains('date_from', 'date_to')
     def _check_dates(self):
         """Ensure date_to is after date_from"""
@@ -136,6 +136,12 @@ class PawnRateTableLine(models.Model):
     _name = 'pawn.rate.table.line'
     _description = 'Pawn Rate Table Line'
     _order = 'rate_table_id, sequence, amount_from'
+    
+    # SQL Constraints (Odoo 19 syntax)
+    _constraints = [
+        models.Constraint('CHECK(rate_percent >= 0)', 'Interest rate must be positive or zero!'),
+        models.Constraint('CHECK(amount_from >= 0)', 'Amount from must be positive or zero!'),
+    ]
 
     # Header Reference
     rate_table_id = fields.Many2one(
@@ -207,12 +213,6 @@ class PawnRateTableLine(models.Model):
         store=True,
         help="Auto-generated description of this rate line"
     )
-
-    # SQL Constraints
-    _sql_constraints = [
-        ('rate_positive', 'CHECK(rate_percent >= 0)', 'Interest rate must be positive or zero!'),
-        ('amount_from_positive', 'CHECK(amount_from >= 0)', 'Amount from must be positive or zero!'),
-    ]
 
     @api.depends('amount_from', 'amount_to', 'rate_percent', 'category_id', 'branch_id')
     def _compute_name(self):

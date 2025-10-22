@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Report Action -->
+        <record id="action_report_pawn_redemption_receipt" model="ir.actions.report">
+            <field name="name">Redemption Receipt</field>
+            <field name="model">pawn.ticket</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pawnshop.report_pawn_redemption_receipt_document</field>
+            <field name="report_file">pawnshop.report_pawn_redemption_receipt_document</field>
+            <field name="binding_model_id" ref="model_pawn_ticket"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'Redemption Receipt - %s' % object.ticket_no</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_pawn_redemption_receipt_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 9pt; line-height: 1.3;">
+                            <!-- Header -->
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-8">
+                                    <h2 style="font-size: 14pt; font-weight: 600; margin-bottom: 5px;"><strong>REDEMPTION RECEIPT</strong></h2>
+                                    <h4 style="font-size: 11pt; margin-bottom: 4px;">Ticket No: <span t-field="o.ticket_no" class="text-primary"/></h4>
+                                    <div class="badge bg-success" style="font-size: 7pt; padding: 2px 6px;">PAID IN FULL - ITEMS RELEASED</div>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <img t-att-src="'/report/barcode/QR/%s?width=90&amp;height=90' % o.ticket_no"
+                                         style="width:90px;height:90px;"/>
+                                </div>
+                            </div>
+
+                            <!-- Branch and Date -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-6">
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Branch:</strong> <span t-field="o.branch_id.name"/></p>
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><span t-field="o.branch_id.street"/></p>
+                                    <p style="margin-bottom: 0; font-size: 8.5pt;" t-if="o.branch_id.phone"><i class="fa fa-phone" style="font-size: 7pt;"/> <span t-field="o.branch_id.phone"/></p>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Date Pledged:</strong> <span t-field="o.date_pledged" t-options="{'widget': 'date'}"/></p>
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Date Redeemed:</strong> <span t-field="o.date_redeemed" t-options="{'widget': 'date'}"/></p>
+                                    <t t-set="days_held" t-value="(o.date_redeemed - o.date_pledged).days if o.date_redeemed and o.date_pledged else 0"/>
+                                    <p style="margin-bottom: 0; font-size: 8.5pt;"><strong>Days Held:</strong> <t t-esc="days_held"/> days</p>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Customer Info -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Customer:</strong> <span t-field="o.customer_id.name"/></p>
+                                    <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Phone:</strong> <span t-field="o.customer_id.phone"/></p>
+                                    <p style="margin-bottom: 0; font-size: 8.5pt;"><strong>ID:</strong> <span t-field="o.kyc_id_type"/> - <span t-field="o.kyc_id_number"/></p>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Redeemed Items -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 class="text-primary" style="font-size: 10pt; font-weight: 600; margin-bottom: 4px;">Items Released</h5>
+                                    <table class="table table-sm table-bordered" style="font-size: 7.5pt; margin-bottom: 0;">
+                                        <thead style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th style="padding: 3px 4px; font-size: 8pt;">#</th>
+                                                <th style="padding: 3px 4px; font-size: 8pt;">Description</th>
+                                                <th style="padding: 3px 4px; font-size: 8pt;">Category</th>
+                                                <th style="padding: 3px 4px; font-size: 8pt;">Serial No.</th>
+                                                <th class="text-end" style="padding: 3px 4px; font-size: 8pt;">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.line_ids" t-as="line">
+                                                <td style="padding: 2px 4px;"><t t-esc="line_index + 1"/></td>
+                                                <td style="padding: 2px 4px;">
+                                                    <span t-field="line.name"/>
+                                                    <span t-if="line.brand"> - <span t-field="line.brand"/></span>
+                                                </td>
+                                                <td style="padding: 2px 4px;"><span t-field="line.category_id.name"/></td>
+                                                <td style="padding: 2px 4px; font-size: 7pt;"><span t-field="line.serial_number"/></td>
+                                                <td class="text-end" style="padding: 2px 4px;">
+                                                    <span t-field="line.appraised_value" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot style="background-color: #f8f9fa;">
+                                            <tr>
+                                                <th colspan="4" class="text-end" style="padding: 4px 6px; font-size: 8.5pt;">Total Item Count:</th>
+                                                <th class="text-end" style="padding: 4px 6px; font-size: 8.5pt;"><t t-esc="len(o.line_ids)"/> items</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Payment Summary -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <h5 class="text-primary" style="font-size: 10pt; font-weight: 600; margin-bottom: 4px;">Payment Summary</h5>
+                                    <table class="table table-bordered" style="font-size: 8pt; margin-bottom: 0;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding: 2px 6px;"><strong>Principal Amount</strong></td>
+                                                <td class="text-end" style="padding: 2px 6px;">
+                                                    <span t-field="o.principal_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 2px 6px;">Interest Charges</td>
+                                                <td class="text-end" style="padding: 2px 6px;">
+                                                    <span t-field="o.interest_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                            <tr t-if="o.penalty_amount > 0">
+                                                <td style="padding: 2px 6px;">Penalty Charges</td>
+                                                <td class="text-end" style="padding: 2px 6px;">
+                                                    <span t-field="o.penalty_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 2px 6px;">Service Fee</td>
+                                                <td class="text-end" style="padding: 2px 6px;">
+                                                    <span t-field="o.service_fee" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="table-success">
+                                            <tr>
+                                                <th style="padding: 4px 6px; font-size: 9pt;"><strong>TOTAL PAID</strong></th>
+                                                <th class="text-end" style="padding: 4px 6px;">
+                                                    <strong style="font-size: 10pt;"><span t-field="o.total_due" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong>
+                                                </th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Payment Details -->
+                            <div class="row" style="margin-bottom: 8px;" t-if="o.invoice_ids">
+                                <div class="col-12">
+                                    <h6 class="text-primary" style="font-size: 9.5pt; font-weight: 600; margin-bottom: 3px;">Payment Details</h6>
+                                    <t t-set="redemption_invoice" t-value="o.invoice_ids.filtered(lambda inv: inv.move_type == 'out_invoice' and inv.payment_state == 'paid').sorted('date', reverse=True)[:1]"/>
+                                    <div t-if="redemption_invoice" style="font-size: 8.5pt;">
+                                        <p style="margin-bottom: 2px;"><strong>Invoice No:</strong> <span t-field="redemption_invoice.name"/></p>
+                                        <p style="margin-bottom: 2px;"><strong>Payment Method:</strong> <span t-field="redemption_invoice.x_payment_method"/></p>
+                                        <p style="margin-bottom: 2px;"><strong>Payment Reference:</strong> <span t-field="redemption_invoice.x_payment_ref"/></p>
+                                        <p style="margin-bottom: 0;"><strong>Payment Date:</strong> <span t-field="redemption_invoice.invoice_date" t-options="{'widget': 'date'}"/></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin: 6px 0; border-top: 1px solid #dee2e6;"/>
+
+                            <!-- Success Message -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <div class="alert alert-success text-center" style="padding: 8px 10px; font-size: 8.5pt; margin-bottom: 0;">
+                                        <h5 style="font-size: 10pt; font-weight: 600; margin-bottom: 2px;"><i class="fa fa-check-circle" style="font-size: 9pt;"/> LOAN FULLY SETTLED</h5>
+                                        <p style="margin-bottom: 0; font-size: 8pt;">All items have been released to the customer. Thank you for your business!</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Acknowledgment -->
+                            <div class="row" style="margin-bottom: 8px;">
+                                <div class="col-12">
+                                    <div style="border: 1px solid #000; padding: 8px; font-size: 7.5pt;">
+                                        <strong style="font-size: 8pt;">Customer Acknowledgment:</strong>
+                                        <p style="margin-top: 3px; margin-bottom: 0; line-height: 1.2;">I hereby acknowledge receipt of the above-listed items in good condition and confirm that the loan has been fully settled. I have no further claims against the pawnshop regarding this transaction.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Signatures -->
+                            <div class="row" style="margin-top: 15px;">
+                                <div class="col-4 text-center">
+                                    <div style="border-top: 1px solid #000; display: inline-block; padding: 3px 30px; margin-top: 25px;">
+                                        <span style="font-size: 8pt;">Customer Signature</span>
+                                    </div>
+                                    <br/>
+                                    <small style="font-size: 7pt;">Date: ______________</small>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div style="border-top: 1px solid #000; display: inline-block; padding: 3px 30px; margin-top: 25px;">
+                                        <span style="font-size: 8pt;">Cashier</span>
+                                    </div>
+                                    <br/>
+                                    <small style="font-size: 7.5pt;"><span t-field="o.write_uid.name"/></small>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div style="border-top: 1px solid #000; display: inline-block; padding: 3px 30px; margin-top: 25px;">
+                                        <span style="font-size: 8pt;">Witness</span>
+                                    </div>
+                                    <br/>
+                                    <small style="font-size: 7pt;">Date: ______________</small>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-12 text-center text-muted">
+                                    <small style="font-size: 7pt;">
+                                        This is an official redemption receipt. Keep for your records. |
+                                        <span t-field="o.branch_id.phone"/>
+                                    </small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

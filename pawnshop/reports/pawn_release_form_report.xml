@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Report Action -->
+        <record id="action_report_pawn_release_form" model="ir.actions.report">
+            <field name="name">Item Release Form</field>
+            <field name="model">pawn.ticket</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pawnshop.report_pawn_release_form_document</field>
+            <field name="report_file">pawnshop.report_pawn_release_form_document</field>
+            <field name="binding_model_id" ref="model_pawn_ticket"/>
+            <field name="binding_type">report</field>
+            <field name="print_report_name">'Item Release Form - %s' % object.ticket_no</field>
+        </record>
+
+        <!-- Report Template -->
+        <template id="report_pawn_release_form_document">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page" style="font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 8.5pt; line-height: 1.2;">
+                            
+                            <!-- Header -->
+                            <div class="row" style="margin-bottom: 6px;">
+                                <div class="col-8">
+                                    <h1 class="text-uppercase" style="color: #2c3e50; font-weight: 600; font-size: 13pt; margin-bottom: 3px;">
+                                        <i class="fa fa-unlock-alt"/> ITEM RELEASE AUTHORIZATION
+                                    </h1>
+                                    <h3 class="text-primary" style="font-weight: 600; font-size: 10pt; letter-spacing: 0.5px; margin-bottom: 2px;">
+                                        Ticket No: <span t-field="o.ticket_no"/>
+                                    </h3>
+                                    <p class="text-muted" style="margin-bottom: 0; font-size: 7.5pt;">
+                                        <i class="fa fa-info-circle"/> For Internal Use Only - Verify All Information Before Release
+                                    </p>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <!-- QR Code with border -->
+                                    <div style="border: 2px solid #e74c3c; padding: 4px; display: inline-block; background: white;">
+                                        <img t-att-src="'/report/barcode/QR/%s?width=70&amp;height=70' % o.ticket_no"
+                                             style="width:70px;height:70px;"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Release Details Card -->
+                            <div class="card" style="border: 2px solid #e74c3c; margin-bottom: 5px;">
+                                <div class="card-header" style="background-color: #e74c3c; color: white; padding: 3px 6px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9pt; font-weight: 600;"><i class="fa fa-calendar-check-o"/> Release Information</h5>
+                                </div>
+                                <div class="card-body" style="padding: 5px 6px;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 10pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="40%" style="padding: 4px 6px;"><strong>Release Date:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span style="display:inline-block; min-width: 150px; border-bottom: 1px solid #333; padding-bottom: 2px;">&#160;</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>Release Time:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span style="display:inline-block; min-width: 150px; border-bottom: 1px solid #333; padding-bottom: 2px;">&#160;</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>Branch:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.branch_id.name"/></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 10pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="40%" style="padding: 4px 6px;"><strong>Cashier:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span style="display:inline-block; min-width: 150px; border-bottom: 1px solid #333; padding-bottom: 2px;">&#160;</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>Witness:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span style="display:inline-block; min-width: 150px; border-bottom: 1px solid #333; padding-bottom: 2px;">&#160;</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>Status:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span class="badge" style="background-color: #27ae60; color: white; font-size: 9pt; padding: 3px 8px;">
+                                                            <span t-field="o.state"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Information Card -->
+                            <div class="card" style="border: 1px solid #3498db; margin-bottom: 5px;">
+                                <div class="card-header" style="background-color: #3498db; color: white; padding: 3px 6px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9pt; font-weight: 600;"><i class="fa fa-user"/> Customer Information</h5>
+                                </div>
+                                <div class="card-body" style="padding: 5px 6px;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 10pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="35%" style="padding: 4px 6px;"><strong>Name:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.customer_id.name"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>Phone:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.customer_id.phone"/></td>
+                                                </tr>
+                                                <tr t-if="o.customer_id.email">
+                                                    <td style="padding: 4px 6px;"><strong>Email:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.customer_id.email"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px; vertical-align: top;"><strong>Address:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span t-field="o.customer_id.street"/>
+                                                        <t t-if="o.customer_id.street2"><br/><span t-field="o.customer_id.street2"/></t>
+                                                        <t t-if="o.customer_id.city or o.customer_id.state_id or o.customer_id.zip">
+                                                            <br/><span t-esc="', '.join(filter(None, [o.customer_id.city, (o.customer_id.state_id.name if o.customer_id.state_id else None), o.customer_id.zip]))"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 10pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="35%" style="padding: 4px 6px;"><strong>ID Type:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.kyc_id_type"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 4px 6px;"><strong>ID Number:</strong></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.kyc_id_number"/></td>
+                                                </tr>
+                                                <tr t-if="o.kyc_id_expiry">
+                                                    <td style="padding: 4px 6px;"><strong>ID Expiry:</strong></td>
+                                                    <td style="padding: 4px 6px;">
+                                                        <span t-field="o.kyc_id_expiry" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Items to be Released Card -->
+                            <div class="card" style="border: 1px solid #27ae60; margin-bottom: 5px;">
+                                <div class="card-header" style="background-color: #27ae60; color: white; padding: 3px 6px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9pt; font-weight: 600;">
+                                        <i class="fa fa-list"/> Items for Release (<t t-esc="len(o.line_ids)"/> items)
+                                    </h5>
+                                </div>
+                                <div class="card-body" style="padding: 0;">
+                                    <table class="table table-sm table-bordered" style="margin-bottom: 0; font-size: 9pt;">
+                                        <thead style="background-color: #ecf0f1;">
+                                            <tr>
+                                                <th width="5%" style="padding: 5px 6px; font-size: 9.5pt;">#</th>
+                                                <th width="30%" style="padding: 5px 6px; font-size: 9.5pt;">Description</th>
+                                                <th width="15%" style="padding: 5px 6px; font-size: 9.5pt;">Category</th>
+                                                <th width="20%" style="padding: 5px 6px; font-size: 9.5pt;">Brand/Model</th>
+                                                <th width="15%" style="padding: 5px 6px; font-size: 9.5pt;">Serial No.</th>
+                                                <th width="15%" class="text-end" style="padding: 5px 6px; font-size: 9.5pt;">Condition</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.line_ids" t-as="line">
+                                                <td class="text-center" style="padding: 4px 6px;"><strong><t t-esc="line_index + 1"/></strong></td>
+                                                <td style="padding: 4px 6px;"><span t-field="line.name"/></td>
+                                                <td style="padding: 4px 6px;">
+                                                    <span class="badge" style="background-color: #95a5a6; font-size: 8pt; padding: 2px 6px;">
+                                                        <span t-field="line.category_id.name"/>
+                                                    </span>
+                                                </td>
+                                                <td style="padding: 4px 6px;">
+                                                    <span t-field="line.brand"/>
+                                                    <span t-if="line.model"><br/><span class="text-muted" style="font-size: 8.5pt;"><span t-field="line.model"/></span></span>
+                                                </td>
+                                                <td style="padding: 4px 6px; font-size: 8.5pt;"><span t-field="line.serial_number"/></td>
+                                                <td class="text-end" style="padding: 4px 6px;">
+                                                    <span t-field="line.condition"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot style="background-color: #d5dbdb;">
+                                            <tr>
+                                                <th colspan="6" class="text-end" style="padding: 6px 8px; font-size: 9.5pt;">
+                                                    Total Items to Release: <strong style="font-size: 10.5pt;"><t t-esc="len(o.line_ids)"/></strong> items
+                                                </th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Verification Checklist Card -->
+                            <div class="card" style="border: 1px solid #f39c12; margin-bottom: 5px;">
+                                <div class="card-header" style="background-color: #f39c12; color: white; padding: 3px 6px;">
+                                    <h5 style="margin-bottom: 0; font-size: 9pt; font-weight: 600;"><i class="fa fa-check-square-o"/> Verification Checklist</h5>
+                                </div>
+                                <div class="card-body" style="padding: 5px 6px;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 9.5pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="8%" style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Customer ID verified and matches records</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Original pawn ticket presented</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">All items retrieved from custody</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Item condition verified</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="col-6">
+                                            <table class="table table-sm table-borderless" style="font-size: 9.5pt; margin-bottom: 0;">
+                                                <tr>
+                                                    <td width="8%" style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Payment fully received</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Customer signature obtained</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Stock system updated</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="padding: 3px 6px; font-size: 12pt;">☐</td>
+                                                    <td style="padding: 3px 6px;">Receipt issued to customer</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Acknowledgment -->
+                            <div class="card" style="border: 1px solid #95a5a6; margin-bottom: 5px;">
+                                <div class="card-body" style="padding: 5px 6px;">
+                                    <h6 style="font-size: 8.5pt; font-weight: 600; margin-bottom: 2px;">Customer Acknowledgment</h6>
+                                    <p style="font-size: 7.5pt; margin-bottom: 0; line-height: 1.2;">
+                                        I hereby acknowledge receipt of the above-listed items in good condition and confirm that the loan has been fully settled. 
+                                        I have inspected all items and have no further claims against the pawnshop regarding this transaction.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Signatures -->
+                            <div class="row" style="margin-top: 8px; margin-bottom: 5px;">
+                                <div class="col-4 text-center">
+                                    <div style="border-bottom: 2px solid #000; width: 85%; display: inline-block; margin-bottom: 3px; height: 25px;"></div>
+                                    <p style="margin-bottom: 1px; font-size: 8pt;"><strong>RELEASED BY (CASHIER)</strong></p>
+                                    <p style="font-size: 7pt; margin-bottom: 0;">Name: ________________</p>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div style="border-bottom: 2px solid #000; width: 85%; display: inline-block; margin-bottom: 3px; height: 25px;"></div>
+                                    <p style="margin-bottom: 1px; font-size: 8pt;"><strong>VERIFIED BY (WITNESS)</strong></p>
+                                    <p style="font-size: 7pt; margin-bottom: 0;">Name: ________________</p>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div style="border-bottom: 2px solid #000; width: 85%; display: inline-block; margin-bottom: 3px; height: 25px;"></div>
+                                    <p style="margin-bottom: 1px; font-size: 8pt;"><strong>RECEIVED BY (CUSTOMER)</strong></p>
+                                    <p style="font-size: 7pt; margin-bottom: 0;">Name: <span t-field="o.customer_id.name"/></p>
+                                </div>
+                            </div>
+
+                            <!-- Footer Note -->
+                            <div class="text-center" style="border-top: 1px solid #e74c3c; padding-top: 5px; margin-top: 5px;">
+                                <p style="margin-bottom: 0; font-size: 7pt; line-height: 1.2;">
+                                    <strong><i class="fa fa-exclamation-triangle"/> IMPORTANT:</strong> This form must be completed for every item release. 
+                                    Keep original in branch records. | For inquiries: <span t-field="o.branch_id.phone"/>
+                                </p>
+                            </div>
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

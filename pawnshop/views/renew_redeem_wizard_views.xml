@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Renew Wizard View -->
+    <record id="view_pawn_renew_wizard" model="ir.ui.view">
+      <field name="name">pawn.renew.wizard.form</field>
+      <field name="model">pawn.renew.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Renew Pawn Ticket">
+          <group>
+            <group>
+              <field name="ticket_id" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+              <field name="new_maturity_date"/>
+            </group>
+            <group>
+              <field name="interest_amount"/>
+              <field name="penalty_amount"/>
+              <field name="service_fee"/>
+              <field name="total_due" readonly="1"/>
+            </group>
+          </group>
+          <footer>
+            <button string="Cancel" class="btn-secondary" special="cancel"/>
+            <button name="action_confirm" type="object" string="Create Renewal Invoice" class="btn-primary"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_pawn_renew_wizard" model="ir.actions.act_window">
+      <field name="name">Renew Pawn Ticket</field>
+      <field name="res_model">pawn.renew.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <!-- Redeem Wizard View -->
+    <record id="view_pawn_redeem_wizard" model="ir.ui.view">
+      <field name="name">pawn.redeem.wizard.form</field>
+      <field name="model">pawn.redeem.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Redeem Pawn Ticket">
+          <group>
+            <group>
+              <field name="ticket_id" readonly="1"/>
+              <field name="currency_id" invisible="1"/>
+            </group>
+            <group>
+              <field name="principal_amount"/>
+              <field name="interest_amount"/>
+              <field name="penalty_amount"/>
+              <field name="service_fee"/>
+              <field name="total_due" readonly="1"/>
+            </group>
+            <group>
+              <field name="payment_method"/>
+              <field name="payment_ref"/>
+            </group>
+          </group>
+          <footer>
+            <button string="Cancel" class="btn-secondary" special="cancel"/>
+            <button name="action_confirm" type="object" string="Create Redemption Invoice" class="btn-primary"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_pawn_redeem_wizard" model="ir.actions.act_window">
+      <field name="name">Redeem Pawn Ticket</field>
+      <field name="res_model">pawn.redeem.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+  </data>
+</odoo>

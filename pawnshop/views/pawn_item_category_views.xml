@@ -107,11 +107,11 @@
                                     </div>
                                     <div class="o_kanban_record_body">
                                         <div>
-                                            <i class="fa fa-percent"/> LTV: <field name="default_loan_to_value_ratio"/>%
+                                            <i class="fa fa-percent" title="Loan to Value Ratio"/> LTV: <field name="default_loan_to_value_ratio"/>%
                                         </div>
                                         <div class="mt-1">
                                             <span class="badge text-bg-info">
-                                                <i class="fa fa-cubes"/> <field name="item_count"/> items
+                                                <i class="fa fa-cubes" title="Items"/> <field name="item_count"/> items
                                             </span>
                                         </div>
                                     </div>

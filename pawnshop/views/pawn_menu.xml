@@ -9,6 +9,14 @@
                   web_icon="pawnshop,static/description/icon.png"
                   groups="group_pawn_cashier"/>
 
+        <!-- Quick Action: New Ticket (Top Level) -->
+        <menuitem id="menu_pawnshop_new_ticket_quick"
+                  name="New Pawn Ticket"
+                  parent="menu_pawnshop_root"
+                  action="action_pawn_intake_wizard"
+                  sequence="5"
+                  groups="group_pawn_cashier,group_pawn_appraiser"/>
+
         <!-- Main Menus -->
         <menuitem id="menu_pawnshop_operations"
                   name="Operations"
@@ -26,6 +34,37 @@
                   sequence="30"
                   groups="group_pawn_manager,group_pawn_accountant"/>
 
+        <!-- Reports Submenus -->
+        <menuitem id="menu_pawnshop_report_loan_book"
+                  name="Loan Book &amp; Aging"
+                  parent="menu_pawnshop_reports"
+                  action="action_pawn_loan_book_report"
+                  sequence="10"/>
+
+        <menuitem id="menu_pawnshop_report_interest_penalty"
+                  name="Interest &amp; Penalty Summary"
+                  parent="menu_pawnshop_reports"
+                  action="action_pawn_interest_penalty_summary"
+                  sequence="20"/>
+
+        <menuitem id="menu_pawnshop_report_ticket_register"
+                  name="Ticket Register"
+                  parent="menu_pawnshop_reports"
+                  action="action_pawn_ticket_register"
+                  sequence="30"/>
+
+        <menuitem id="menu_pawnshop_report_inventory"
+                  name="Inventory Report"
+                  parent="menu_pawnshop_reports"
+                  action="action_pawn_inventory_report"
+                  sequence="40"/>
+
+        <menuitem id="menu_pawnshop_report_branch_kpi"
+                  name="Branch KPI"
+                  parent="menu_pawnshop_reports"
+                  action="action_pawn_branch_kpi"
+                  sequence="50"/>
+
         <menuitem id="menu_pawnshop_configuration"
                   name="Configuration"
                   parent="menu_pawnshop_root"
@@ -33,6 +72,13 @@
                   groups="group_pawn_admin"/>
 
         <!-- Operations Submenus -->
+        <menuitem id="menu_pawnshop_new_ticket"
+                  name="New Pawn Ticket"
+                  parent="menu_pawnshop_operations"
+                  action="action_pawn_intake_wizard"
+                  sequence="5"
+                  groups="group_pawn_cashier,group_pawn_appraiser"/>
+
         <menuitem id="menu_pawnshop_ticket"
                   name="Pawn Tickets"
                   parent="menu_pawnshop_operations"

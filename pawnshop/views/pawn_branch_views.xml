@@ -30,11 +30,10 @@
             <field name="arch" type="xml">
                 <form string="Branch">
                     <header>
-                        <button name="%(action_pawn_ticket)d"
-                                type="action"
+                        <button name="action_new_ticket"
+                                type="object"
                                 string="New Ticket"
                                 class="btn-primary"
-                                context="{'default_branch_id': id}"
                                 groups="pawnshop.group_pawn_cashier"/>
                     </header>
                     <sheet>
@@ -136,13 +135,13 @@
                                     <div class="o_kanban_record_bottom">
                                         <div class="oe_kanban_bottom_left">
                                             <span class="badge text-bg-info">
-                                                <i class="fa fa-ticket"/> <field name="ticket_count"/> Active
+                                                <i class="fa fa-ticket" title="Active Tickets"/> <field name="ticket_count"/> Active
                                             </span>
                                             <span class="badge text-bg-warning" invisible="due_today_count == 0">
-                                                <i class="fa fa-calendar"/> <field name="due_today_count"/> Due
+                                                <i class="fa fa-calendar" title="Due Today"/> <field name="due_today_count"/> Due
                                             </span>
                                             <span class="badge text-bg-danger" invisible="overdue_count == 0">
-                                                <i class="fa fa-exclamation"/> <field name="overdue_count"/> Overdue
+                                                <i class="fa fa-exclamation" title="Overdue"/> <field name="overdue_count"/> Overdue
                                             </span>
                                         </div>
                                     </div>

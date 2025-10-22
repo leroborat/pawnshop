@@ -46,11 +46,21 @@ Complete solution for pawnshop operations including:
         'views/pawn_item_category_views.xml',
         'views/pawn_rate_table_views.xml',
         'views/pawn_ticket_views.xml',
-        'views/pawn_branch_views.xml',
         'views/pawn_inventory_views.xml',
+        'views/pawn_intake_wizard_views.xml',
         'views/auction_invoice_wizard_views.xml',
+        'views/renew_redeem_wizard_views.xml',
+        'views/pawn_branch_views.xml',
         'views/res_config_settings_views.xml',
+        'views/pawn_operational_reports_views.xml',
         'views/pawn_menu.xml',
+
+        # Reports (PDF)
+        'reports/pawn_ticket_report.xml',
+        'reports/pawn_renewal_receipt_report.xml',
+        'reports/pawn_redemption_receipt_report.xml',
+        'reports/pawn_release_form_report.xml',
+        'reports/pawn_forfeiture_notice_report.xml',
     ],
 
     # Demo data

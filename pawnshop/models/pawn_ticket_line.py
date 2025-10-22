@@ -479,8 +479,29 @@ class PawnTicketLine(models.Model):
         if self.state != 'redeemed':
             raise ValidationError(_('Cannot redeem item that is not in redeemed state.'))
 
+        # Ensure a product exists (mirror intake/forfeit behavior)
         if not self.product_id:
-            raise UserError(_('No product associated with this item. Cannot create stock move.'))
+            product_name = f"{self.name}"
+            if self.brand:
+                product_name += f" - {self.brand}"
+            if self.serial_number:
+                product_name += f" (SN: {self.serial_number})"
+
+            try:
+                default_categ = self.env.ref('pawnshop.product_category_pawned_items')
+            except ValueError:
+                default_categ = self.env.ref('product.product_category_all')
+
+            product_vals = {
+                'name': product_name,
+                'type': 'consu',  # Goods for this Odoo 19 build
+                'categ_id': default_categ.id,
+                'sale_ok': False,
+                'purchase_ok': False,
+                'tracking': 'none',
+                'default_code': self.barcode or False,
+            }
+            self.product_id = self.env['product.product'].create(product_vals)
 
         # Get stock locations
         try:

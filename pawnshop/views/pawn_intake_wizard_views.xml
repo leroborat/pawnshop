@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <!-- Intake Wizard Form View -->
+    <record id="view_pawn_intake_wizard_form" model="ir.ui.view">
+      <field name="name">pawn.intake.wizard.form</field>
+      <field name="model">pawn.intake.wizard</field>
+      <field name="arch" type="xml">
+        <form string="New Pawn Ticket">
+          <!-- Progress Bar -->
+          <header>
+            <field name="current_step" widget="statusbar" statusbar_visible="customer,kyc,items,appraisal,rate,preview"/>
+          </header>
+
+          <sheet>
+            <!-- Step 1: Customer Information -->
+            <div invisible="current_step != 'customer'">
+              <h2>Customer Information</h2>
+              <group>
+                <group>
+                  <field name="customer_id" options="{'no_create': False, 'no_open': True}"/>
+                  <field name="branch_id" options="{'no_create': True}"/>
+                  <field name="company_id" invisible="1"/>
+                  <field name="currency_id" invisible="1"/>
+                </group>
+                <group string="Customer Contact">
+                  <field name="customer_id" invisible="1"/>
+                </group>
+              </group>
+            </div>
+
+            <!-- Step 2: KYC & Documents -->
+            <div invisible="current_step != 'kyc'">
+              <h2>KYC &amp; Document Verification</h2>
+              <group>
+                <group>
+                  <field name="kyc_id_type"/>
+                  <field name="kyc_id_number"/>
+                  <field name="kyc_id_expiry"/>
+                </group>
+                <group>
+                  <div class="o_form_label" colspan="2">Photo Uploads</div>
+                  <field name="kyc_photo" widget="image" class="oe_avatar" nolabel="1"/>
+                  <field name="kyc_id_photo_front" widget="image" class="oe_avatar" nolabel="1"/>
+                  <field name="kyc_id_photo_back" widget="image" class="oe_avatar" nolabel="1"/>
+                </group>
+              </group>
+              <div class="alert alert-info" role="alert">
+                <strong>Reminder:</strong> Ensure all ID photos are clear and legible. Customer photo is required for verification.
+              </div>
+            </div>
+
+            <!-- Step 3: Items Entry -->
+            <div invisible="current_step != 'items'">
+              <h2>Pawned Items</h2>
+              <group>
+                <field name="item_count" readonly="1"/>
+              </group>
+              <field name="line_ids" nolabel="1">
+                <list editable="bottom">
+                  <field name="sequence" widget="handle"/>
+                  <field name="category_id"/>
+                  <field name="name"/>
+                  <field name="brand"/>
+                  <field name="model"/>
+                  <field name="serial_number"/>
+                  <field name="condition"/>
+                </list>
+              </field>
+              <div class="alert alert-warning" role="alert">
+                <strong>Note:</strong> Add basic item details here. You'll provide appraisal values and photos in the next step.
+              </div>
+            </div>
+
+            <!-- Step 4: Appraisal & Valuation -->
+            <div invisible="current_step != 'appraisal'">
+              <h2>Appraisal &amp; Valuation</h2>
+              <group>
+                <field name="appraised_value" readonly="1" widget="monetary"/>
+              </group>
+              <div class="alert alert-info" role="alert">
+                <strong>Instructions:</strong> For each item, enter the weight, purity, condition, and appraised value. Photos can be uploaded after the ticket is created.
+              </div>
+              <field name="line_ids" nolabel="1">
+                <list editable="bottom" create="0" delete="0">
+                  <field name="name" readonly="1"/>
+                  <field name="category_id" readonly="1"/>
+                  <field name="weight" optional="show"/>
+                  <field name="weight_unit" optional="show"/>
+                  <field name="karat" optional="hide"/>
+                  <field name="color" optional="show"/>
+                  <field name="condition"/>
+                  <field name="appraised_value" required="1" sum="Total"/>
+                  <field name="currency_id" column_invisible="1"/>
+                </list>
+              </field>
+              <div class="text-muted small mt-2">
+                <i class="fa fa-info-circle" title="Info"/> Note: Item photos can be added after creating the ticket by opening the ticket form and editing individual items.
+              </div>
+            </div>
+
+            <!-- Step 5: Rate & Loan Terms -->
+            <div invisible="current_step != 'rate'">
+              <h2>Loan Terms &amp; Calculation</h2>
+              <group>
+                <group>
+                  <field name="appraised_value" readonly="1" widget="monetary"/>
+                  <field name="principal_amount" widget="monetary"/>
+                  <field name="ltv_ratio" readonly="1" widget="percentage"/>
+                </group>
+                <group>
+                  <field name="interest_rate"/>
+                  <field name="date_maturity"/>
+                  <field name="interest_amount" readonly="1" widget="monetary"/>
+                  <field name="total_due_at_maturity" readonly="1" widget="monetary" class="text-success"/>
+                </group>
+              </group>
+              <div class="alert alert-warning" role="alert" invisible="ltv_ratio &lt;= 80.0">
+                <strong>Warning:</strong> LTV ratio is high. Consider reducing principal amount.
+              </div>
+            </div>
+
+            <!-- Step 6: Preview & Confirm -->
+            <div invisible="current_step != 'preview'">
+              <h2>Review &amp; Confirm</h2>
+
+              <!-- Customer Summary -->
+              <group string="Customer Information">
+                <field name="customer_id" readonly="1"/>
+                <field name="branch_id" readonly="1"/>
+                <field name="kyc_id_type" readonly="1"/>
+                <field name="kyc_id_number" readonly="1"/>
+              </group>
+
+              <!-- Items Summary -->
+              <group string="Pawned Items">
+                <field name="line_ids" nolabel="1" readonly="1">
+                  <list create="0" delete="0" edit="0">
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="appraised_value"/>
+                    <field name="currency_id" column_invisible="1"/>
+                  </list>
+                </field>
+              </group>
+
+              <!-- Financial Summary -->
+              <group string="Loan Terms">
+                <group>
+                  <field name="appraised_value" readonly="1" widget="monetary"/>
+                  <field name="principal_amount" readonly="1" widget="monetary"/>
+                  <field name="ltv_ratio" readonly="1" widget="percentage"/>
+                </group>
+                <group>
+                  <field name="interest_rate" readonly="1"/>
+                  <field name="date_maturity" readonly="1"/>
+                  <field name="interest_amount" readonly="1" widget="monetary"/>
+                  <field name="total_due_at_maturity" readonly="1" widget="monetary" class="oe_subtotal_footer_separator"/>
+                </group>
+              </group>
+
+              <!-- Notes & Terms -->
+              <group>
+                <field name="notes" placeholder="Add any special notes or instructions..."/>
+              </group>
+
+              <group>
+                <field name="terms_accepted" widget="boolean"/>
+                <label for="terms_accepted" string="Customer has read and accepted the Terms and Conditions"/>
+              </group>
+
+              <div class="alert alert-success" role="alert">
+                <strong>Ready to create ticket!</strong> Review all information above. Click "Create Ticket" to proceed.
+              </div>
+            </div>
+
+          </sheet>
+
+          <!-- Footer Buttons -->
+          <footer>
+            <button string="Cancel" class="btn-secondary" special="cancel" invisible="current_step == 'preview'"/>
+            <button string="Close" class="btn-secondary" special="cancel" invisible="current_step != 'preview'"/>
+
+            <button string="Previous"
+                    type="object"
+                    name="action_previous_step"
+                    class="btn-secondary"
+                    invisible="current_step == 'customer'"/>
+
+            <button string="Next"
+                    type="object"
+                    name="action_next_step"
+                    class="btn-primary"
+                    invisible="current_step == 'preview'"/>
+
+            <button string="Create Ticket"
+                    type="object"
+                    name="action_create_ticket"
+                    class="btn-primary"
+                    invisible="current_step != 'preview'"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <!-- Intake Wizard Line Form (popup for editing line details) -->
+    <record id="view_pawn_intake_wizard_line_form" model="ir.ui.view">
+      <field name="name">pawn.intake.wizard.line.form</field>
+      <field name="model">pawn.intake.wizard.line</field>
+      <field name="arch" type="xml">
+        <form string="Item Details">
+          <sheet>
+            <group>
+              <group>
+                <field name="category_id"/>
+                <field name="name"/>
+                <field name="brand"/>
+                <field name="model"/>
+                <field name="serial_number"/>
+              </group>
+              <group>
+                <field name="color"/>
+                <field name="condition"/>
+                <field name="weight"/>
+                <field name="weight_unit"/>
+                <field name="karat"/>
+              </group>
+            </group>
+
+            <group>
+              <group>
+                <field name="appraised_value" widget="monetary"/>
+                <field name="currency_id" invisible="1"/>
+              </group>
+            </group>
+
+            <notebook>
+              <page string="Photos">
+                <group>
+                  <group>
+                    <field name="photo_1" widget="image" class="oe_avatar"/>
+                    <field name="photo_2" widget="image" class="oe_avatar"/>
+                  </group>
+                  <group>
+                    <field name="photo_3" widget="image" class="oe_avatar"/>
+                    <field name="photo_4" widget="image" class="oe_avatar"/>
+                  </group>
+                </group>
+              </page>
+              <page string="Appraisal Notes">
+                <field name="appraisal_notes" placeholder="Enter detailed appraisal notes..."/>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action to Open Intake Wizard -->
+    <record id="action_pawn_intake_wizard" model="ir.actions.act_window">
+      <field name="name">New Pawn Ticket</field>
+      <field name="res_model">pawn.intake.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="view_id" ref="view_pawn_intake_wizard_form"/>
+    </record>
+
+  </data>
+</odoo>

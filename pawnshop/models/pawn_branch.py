@@ -13,6 +13,12 @@ class PawnBranch(models.Model):
     _name = 'pawn.branch'
     _description = 'Pawnshop Branch'
     _order = 'sequence, name'
+    
+    # SQL Constraints (Odoo 19 syntax)
+    _constraints = [
+        models.Constraint('UNIQUE(code)', 'Branch code must be unique!'),
+        models.Constraint('UNIQUE(name, company_id)', 'Branch name must be unique per company!'),
+    ]
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Basic Information
@@ -74,6 +80,13 @@ class PawnBranch(models.Model):
         tracking=True
     )
 
+    # Ticket numbering (optional per-branch sequence)
+    ticket_sequence_id = fields.Many2one(
+        'ir.sequence',
+        string='Ticket Sequence',
+        help="Optional per-branch ticket sequence. If not set, the global pawn.ticket sequence will be used."
+    )
+
     # Manager
     manager_id = fields.Many2one(
         'res.users',
@@ -98,12 +111,6 @@ class PawnBranch(models.Model):
         compute='_compute_statistics',
         help="Tickets past grace period"
     )
-
-    # SQL Constraints
-    _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'Branch code must be unique!'),
-        ('name_company_unique', 'UNIQUE(name, company_id)', 'Branch name must be unique per company!'),
-    ]
 
     @api.constrains('code')
     def _check_code_format(self):
@@ -178,5 +185,17 @@ class PawnBranch(models.Model):
             'res_model': 'pawn.ticket',
             'view_mode': 'list,form',
             'domain': [('branch_id', '=', self.id), ('maturity_date', '<', today), ('state', 'in', ['pledged', 'grace'])],
+            'context': {'default_branch_id': self.id}
+        }
+
+    def action_new_ticket(self):
+        """Open intake wizard for creating new ticket"""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'New Pawn Ticket',
+            'res_model': 'pawn.intake.wizard',
+            'view_mode': 'form',
+            'target': 'new',
             'context': {'default_branch_id': self.id}
         }
