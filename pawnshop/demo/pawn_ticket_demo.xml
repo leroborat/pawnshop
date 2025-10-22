@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo Pawn Tickets with Various States -->
+
+        <!-- TICKET 1: Active Pledged Ticket (Gold Ring) -->
+        <record id="pawn_ticket_001" model="pawn.ticket">
+            <field name="ticket_no">MAIN-PT-251022-0001</field>
+            <field name="customer_id" ref="pawn_customer_juan_dela_cruz"/>
+            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() + timedelta(days=15)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">15000.00</field>
+            <field name="interest_rate">3.5</field>
+            <field name="state">pledged</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">national_id</field>
+            <field name="kyc_id_number">1234-5678-9012</field>
+            <field name="disbursement_method">cash</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_001_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_001"/>
+            <field name="sequence">10</field>
+            <field name="name">18K Gold Ring with Diamond</field>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="brand">Cartier</field>
+            <field name="karat">18k</field>
+            <field name="weight">5.2</field>
+            <field name="weight_unit">g</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">20000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 2: Due Today (Laptop) -->
+        <record id="pawn_ticket_002" model="pawn.ticket">
+            <field name="ticket_no">MAIN-PT-251022-0002</field>
+            <field name="customer_id" ref="pawn_customer_maria_santos"/>
+            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="DateTime.now().strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">25000.00</field>
+            <field name="interest_rate">4.0</field>
+            <field name="state">pledged</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">drivers_license</field>
+            <field name="kyc_id_number">N01-12-345678</field>
+            <field name="disbursement_method">gcash</field>
+            <field name="disbursement_reference">GCASH-123456789</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_002_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_002"/>
+            <field name="sequence">10</field>
+            <field name="name">Dell XPS 15 Laptop</field>
+            <field name="category_id" ref="pawnshop.category_electronics"/>
+            <field name="brand">Dell</field>
+            <field name="model">XPS 15 9520</field>
+            <field name="serial_number">DXPS123456789</field>
+            <field name="condition">good</field>
+            <field name="appraised_value">35000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 3: Overdue in Grace Period (iPhone) -->
+        <record id="pawn_ticket_003" model="pawn.ticket">
+            <field name="ticket_no">DWTN-PT-251015-0001</field>
+            <field name="customer_id" ref="pawn_customer_pedro_reyes"/>
+            <field name="branch_id" ref="pawn_branch_downtown"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() - timedelta(days=5)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">18000.00</field>
+            <field name="interest_rate">4.5</field>
+            <field name="state">pledged</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">passport</field>
+            <field name="kyc_id_number">P1234567</field>
+            <field name="disbursement_method">bank_transfer</field>
+            <field name="disbursement_reference">BPI-987654321</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_003_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_003"/>
+            <field name="sequence">10</field>
+            <field name="name">iPhone 14 Pro Max</field>
+            <field name="category_id" ref="pawnshop.category_mobile_phones"/>
+            <field name="brand">Apple</field>
+            <field name="model">iPhone 14 Pro Max</field>
+            <field name="serial_number">IMEI123456789012345</field>
+            <field name="color">Deep Purple</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">25000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 4: Renewed Ticket (Watch) -->
+        <record id="pawn_ticket_004" model="pawn.ticket">
+            <field name="ticket_no">MAIN-PT-250915-0003</field>
+            <field name="customer_id" ref="pawn_customer_ana_garcia"/>
+            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() + timedelta(days=23)).strftime('%Y-%m-%d')"/>
+            <field name="date_renewed" eval="(DateTime.now() - timedelta(days=7)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">30000.00</field>
+            <field name="interest_rate">3.0</field>
+            <field name="state">renewed</field>
+            <field name="rate_table_id" ref="pawn_rate_table_premium"/>
+            <field name="kyc_id_type">national_id</field>
+            <field name="kyc_id_number">9876-5432-1098</field>
+            <field name="disbursement_method">cash</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_004_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_004"/>
+            <field name="sequence">10</field>
+            <field name="name">Rolex Submariner Watch</field>
+            <field name="category_id" ref="pawnshop.category_watches"/>
+            <field name="brand">Rolex</field>
+            <field name="model">Submariner Date</field>
+            <field name="serial_number">ROL123456</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">45000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 5: Redeemed Ticket (Power Tools) -->
+        <record id="pawn_ticket_005" model="pawn.ticket">
+            <field name="ticket_no">NRTH-PT-250920-0001</field>
+            <field name="customer_id" ref="pawn_customer_roberto_cruz"/>
+            <field name="branch_id" ref="pawn_branch_northside"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"/>
+            <field name="date_redeemed" eval="(DateTime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">8000.00</field>
+            <field name="interest_rate">4.0</field>
+            <field name="state">redeemed</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">voters_id</field>
+            <field name="kyc_id_number">VID-2024-123456</field>
+            <field name="disbursement_method">cash</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_005_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_005"/>
+            <field name="sequence">10</field>
+            <field name="name">Makita Cordless Drill Set</field>
+            <field name="category_id" ref="pawnshop.category_tools"/>
+            <field name="brand">Makita</field>
+            <field name="model">DHP484</field>
+            <field name="serial_number">MKT987654</field>
+            <field name="condition">good</field>
+            <field name="appraised_value">12000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 6: Multiple Items (Jewelry Set) -->
+        <record id="pawn_ticket_006" model="pawn.ticket">
+            <field name="ticket_no">MAIN-PT-251010-0004</field>
+            <field name="customer_id" ref="pawn_customer_elena_ramos"/>
+            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() + timedelta(days=18)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">40000.00</field>
+            <field name="interest_rate">3.0</field>
+            <field name="state">pledged</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">national_id</field>
+            <field name="kyc_id_number">5555-6666-7777</field>
+            <field name="disbursement_method">maya</field>
+            <field name="disbursement_reference">MAYA-555666777</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_006_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_006"/>
+            <field name="sequence">10</field>
+            <field name="name">Gold Necklace</field>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="brand">Tiffany &amp; Co.</field>
+            <field name="karat">18k</field>
+            <field name="weight">12.5</field>
+            <field name="weight_unit">g</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">35000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <record id="pawn_ticket_line_006_02" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_006"/>
+            <field name="sequence">20</field>
+            <field name="name">Gold Bracelet</field>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="brand">Tiffany &amp; Co.</field>
+            <field name="karat">18k</field>
+            <field name="weight">8.3</field>
+            <field name="weight_unit">g</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">20000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 7: Draft Ticket (Not yet disbursed) -->
+        <record id="pawn_ticket_007" model="pawn.ticket">
+            <field name="ticket_no">DWTN-PT-251022-0002</field>
+            <field name="customer_id" ref="pawn_customer_carlos_mendoza"/>
+            <field name="branch_id" ref="pawn_branch_downtown"/>
+            <field name="date_created" eval="DateTime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_maturity" eval="(DateTime.now() + timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">12000.00</field>
+            <field name="interest_rate">4.5</field>
+            <field name="state">draft</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">umid</field>
+            <field name="kyc_id_number">UMID-123-456-789</field>
+            <field name="disbursement_method">cash</field>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_007_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_007"/>
+            <field name="sequence">10</field>
+            <field name="name">Samsung Galaxy S23 Ultra</field>
+            <field name="category_id" ref="pawnshop.category_mobile_phones"/>
+            <field name="brand">Samsung</field>
+            <field name="model">Galaxy S23 Ultra</field>
+            <field name="serial_number">IMEI987654321098765</field>
+            <field name="color">Phantom Black</field>
+            <field name="condition">good</field>
+            <field name="appraised_value">18000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="DateTime.now().strftime('%Y-%m-%d')"/>
+        </record>
+
+        <!-- TICKET 8: Forfeited Ticket (Camera) -->
+        <record id="pawn_ticket_008" model="pawn.ticket">
+            <field name="ticket_no">MAIN-PT-250815-0001</field>
+            <field name="customer_id" ref="pawn_customer_sofia_torres"/>
+            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="date_created" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="date_pledged" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d')"/>
+            <field name="date_maturity" eval="(DateTime.now() - timedelta(days=38)).strftime('%Y-%m-%d')"/>
+            <field name="date_forfeited" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
+            <field name="principal_amount">22000.00</field>
+            <field name="interest_rate">4.0</field>
+            <field name="state">forfeited</field>
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="kyc_id_type">drivers_license</field>
+            <field name="kyc_id_number">N02-23-456789</field>
+            <field name="disbursement_method">cash</field>
+            <field name="disbursed_by" ref="base.user_admin"/>
+            <field name="disbursement_date" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="terms_accepted">True</field>
+        </record>
+
+        <record id="pawn_ticket_line_008_01" model="pawn.ticket.line">
+            <field name="ticket_id" ref="pawn_ticket_008"/>
+            <field name="sequence">10</field>
+            <field name="name">Canon EOS R6 Camera</field>
+            <field name="category_id" ref="pawnshop.category_electronics"/>
+            <field name="brand">Canon</field>
+            <field name="model">EOS R6</field>
+            <field name="serial_number">CAN123456789</field>
+            <field name="condition">excellent</field>
+            <field name="appraised_value">32000.00</field>
+            <field name="appraised_by" ref="base.user_admin"/>
+            <field name="appraisal_date" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d')"/>
+        </record>
+
+    </data>
+</odoo>

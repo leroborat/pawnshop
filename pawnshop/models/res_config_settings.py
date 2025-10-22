@@ -51,10 +51,9 @@ class ResConfigSettings(models.TransientModel):
         config_parameter='pawnshop.service_fee_percent',
         help="Service fee percentage on loan amount"
     )
-    pawn_service_fee_amount = fields.Monetary(
+    pawn_service_fee_amount = fields.Float(
         string='Fixed Service Fee',
         default=0.0,
-        currency_field='currency_id',
         config_parameter='pawnshop.service_fee_amount',
         help="Fixed service fee amount (if any)"
     )
@@ -78,17 +77,15 @@ class ResConfigSettings(models.TransientModel):
         config_parameter='pawnshop.max_ltv_ratio',
         help="Maximum loan-to-value ratio allowed"
     )
-    pawn_min_loan_amount = fields.Monetary(
+    pawn_min_loan_amount = fields.Float(
         string='Minimum Loan Amount',
         default=100.0,
-        currency_field='currency_id',
         config_parameter='pawnshop.min_loan_amount',
         help="Minimum loan amount per ticket"
     )
-    pawn_max_loan_amount = fields.Monetary(
+    pawn_max_loan_amount = fields.Float(
         string='Maximum Loan Amount',
         default=500000.0,
-        currency_field='currency_id',
         config_parameter='pawnshop.max_loan_amount',
         help="Maximum loan amount per ticket (0 for unlimited)"
     )
@@ -184,10 +181,10 @@ class ResConfigSettings(models.TransientModel):
         config_parameter='pawnshop.print_terms',
         help="Include terms and conditions on pawn tickets"
     )
-    pawn_terms_text = fields.Html(
+    pawn_terms_text = fields.Char(
         string='Terms and Conditions',
         config_parameter='pawnshop.terms_text',
-        help="Terms and conditions text to print on tickets"
+        help="Terms and conditions text to print on tickets (or create a separate template)"
     )
 
     # Default Rate Table

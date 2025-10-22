@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo Warehouses for Branches -->
+        
+        <record id="warehouse_main_branch" model="stock.warehouse">
+            <field name="name">Main Branch Warehouse</field>
+            <field name="code">MAIN-WH</field>
+        </record>
+
+        <record id="warehouse_downtown_branch" model="stock.warehouse">
+            <field name="name">Downtown Branch Warehouse</field>
+            <field name="code">DWTN-WH</field>
+        </record>
+
+        <record id="warehouse_northside_branch" model="stock.warehouse">
+            <field name="name">Northside Branch Warehouse</field>
+            <field name="code">NRTH-WH</field>
+        </record>
+
+        <!-- Demo Branches -->
+        
+        <!-- Main Branch -->
+        <record id="pawn_branch_main" model="pawn.branch">
+            <field name="name">Main Branch</field>
+            <field name="code">MAIN</field>
+            <field name="warehouse_id" ref="warehouse_main_branch"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Downtown Branch -->
+        <record id="pawn_branch_downtown" model="pawn.branch">
+            <field name="name">Downtown Branch</field>
+            <field name="code">DWTN</field>
+            <field name="warehouse_id" ref="warehouse_downtown_branch"/>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Northside Branch -->
+        <record id="pawn_branch_northside" model="pawn.branch">
+            <field name="name">Northside Branch</field>
+            <field name="code">NRTH</field>
+            <field name="warehouse_id" ref="warehouse_northside_branch"/>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

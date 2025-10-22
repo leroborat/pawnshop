@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Pawnshop Security Categories -->
-        <record id="module_category_pawnshop" model="ir.module.category">
+        <!-- Pawnshop Privilege (replaces category in Odoo 19) -->
+        <record id="res_groups_privilege_pawnshop" model="res.groups.privilege">
             <field name="name">Pawnshop</field>
-            <field name="description">Manage pawnshop operations and access rights</field>
-            <field name="sequence">10</field>
+            <field name="sequence">100</field>
+            <field name="category_id" ref="base.module_category_sales"/>
         </record>
 
         <!-- Security Groups -->
@@ -13,52 +13,131 @@
         <!-- Cashier: Basic operations - intake, renew, redeem -->
         <record id="group_pawn_cashier" model="res.groups">
             <field name="name">Cashier</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">10</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">Can create tickets, process renewals and redemptions</field>
         </record>
 
         <!-- Appraiser: Item appraisal and valuation -->
         <record id="group_pawn_appraiser" model="res.groups">
             <field name="name">Appraiser</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">20</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('group_pawn_cashier'))]"/>
-            <field name="comment">Can appraise items and set loan amounts</field>
         </record>
 
         <!-- Manager: Branch operations and oversight -->
         <record id="group_pawn_manager" model="res.groups">
             <field name="name">Manager</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">30</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('group_pawn_appraiser'))]"/>
-            <field name="comment">Can manage branch operations, forfeitures, and auctions</field>
         </record>
 
         <!-- Accountant: Financial oversight -->
         <record id="group_pawn_accountant" model="res.groups">
             <field name="name">Accountant</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">40</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">Can view financial reports and invoices</field>
         </record>
 
         <!-- Auditor: Read-only access to all records -->
         <record id="group_pawn_auditor" model="res.groups">
             <field name="name">Auditor</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">50</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
-            <field name="comment">Read-only access to all pawnshop records</field>
         </record>
 
         <!-- Admin: Full system access -->
         <record id="group_pawn_admin" model="res.groups">
             <field name="name">Administrator</field>
-            <field name="category_id" ref="module_category_pawnshop"/>
+            <field name="sequence">60</field>
+            <field name="privilege_id" ref="res_groups_privilege_pawnshop"/>
             <field name="implied_ids" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_accountant'))]"/>
-            <field name="comment">Full access to all pawnshop features and configuration</field>
+            <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
-        <!-- Multi-user record rules will be added here for branch-based access -->
+        <!-- Record Rules for Multi-Branch Access Control -->
+
+        <!-- Pawn Ticket Rules -->
+
+        <!-- Cashier/Appraiser: Only see tickets from their branches (based on user's allowed branches) -->
+        <record id="pawn_ticket_rule_cashier" model="ir.rule">
+            <field name="name">Cashier: Own Branch Tickets</field>
+            <field name="model_id" ref="model_pawn_ticket"/>
+            <field name="groups" eval="[(4, ref('group_pawn_cashier'))]"/>
+            <field name="domain_force">[('branch_id', 'in', user.branch_ids.ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Manager/Accountant/Auditor: See all tickets in company -->
+        <record id="pawn_ticket_rule_manager" model="ir.rule">
+            <field name="name">Manager/Accountant/Auditor: All Company Tickets</field>
+            <field name="model_id" ref="model_pawn_ticket"/>
+            <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_accountant')), (4, ref('group_pawn_auditor'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Pawn Ticket Line Rules -->
+
+        <!-- Cashier/Appraiser: Only see items from their branch tickets -->
+        <record id="pawn_ticket_line_rule_cashier" model="ir.rule">
+            <field name="name">Cashier: Own Branch Ticket Items</field>
+            <field name="model_id" ref="model_pawn_ticket_line"/>
+            <field name="groups" eval="[(4, ref('group_pawn_cashier'))]"/>
+            <field name="domain_force">[('branch_id', 'in', user.branch_ids.ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Manager/Accountant/Auditor: See all ticket items -->
+        <record id="pawn_ticket_line_rule_manager" model="ir.rule">
+            <field name="name">Manager/Accountant/Auditor: All Ticket Items</field>
+            <field name="model_id" ref="model_pawn_ticket_line"/>
+            <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_accountant')), (4, ref('group_pawn_auditor'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- Branch Rules -->
+
+        <!-- Cashier/Appraiser: Only see/access their assigned branches -->
+        <record id="pawn_branch_rule_cashier" model="ir.rule">
+            <field name="name">Cashier: Own Branches Only</field>
+            <field name="model_id" ref="model_pawn_branch"/>
+            <field name="groups" eval="[(4, ref('group_pawn_cashier'))]"/>
+            <field name="domain_force">[('id', 'in', user.branch_ids.ids)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Manager/Accountant/Auditor/Admin: See all branches -->
+        <record id="pawn_branch_rule_manager" model="ir.rule">
+            <field name="name">Manager/Admin: All Branches</field>
+            <field name="model_id" ref="model_pawn_branch"/>
+            <field name="groups" eval="[(4, ref('group_pawn_manager')), (4, ref('group_pawn_accountant')), (4, ref('group_pawn_auditor')), (4, ref('group_pawn_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
 
     </data>
 </odoo>

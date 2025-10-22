@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo Customers for Pawnshop -->
+        
+        <record id="pawn_customer_juan_dela_cruz" model="res.partner">
+            <field name="name">Juan Dela Cruz</field>
+            <field name="street">123 Main Street</field>
+            <field name="city">Manila</field>
+            <field name="zip">1000</field>
+            <field name="phone">+63 917 123 4567</field>
+            <field name="email">juan.delacruz@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_maria_santos" model="res.partner">
+            <field name="name">Maria Santos</field>
+            <field name="street">456 Rizal Avenue</field>
+            <field name="city">Quezon City</field>
+            <field name="zip">1100</field>
+            <field name="phone">+63 918 234 5678</field>
+            <field name="email">maria.santos@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_pedro_reyes" model="res.partner">
+            <field name="name">Pedro Reyes</field>
+            <field name="street">789 Bonifacio Street</field>
+            <field name="city">Makati</field>
+            <field name="zip">1200</field>
+            <field name="phone">+63 919 345 6789</field>
+            <field name="email">pedro.reyes@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_ana_garcia" model="res.partner">
+            <field name="name">Ana Garcia</field>
+            <field name="street">321 Luna Street</field>
+            <field name="city">Pasig</field>
+            <field name="zip">1600</field>
+            <field name="phone">+63 920 456 7890</field>
+            <field name="email">ana.garcia@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_roberto_cruz" model="res.partner">
+            <field name="name">Roberto Cruz</field>
+            <field name="street">654 Del Pilar Street</field>
+            <field name="city">Mandaluyong</field>
+            <field name="zip">1550</field>
+            <field name="phone">+63 921 567 8901</field>
+            <field name="email">roberto.cruz@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_elena_ramos" model="res.partner">
+            <field name="name">Elena Ramos</field>
+            <field name="street">987 Mabini Street</field>
+            <field name="city">Taguig</field>
+            <field name="zip">1630</field>
+            <field name="phone">+63 922 678 9012</field>
+            <field name="email">elena.ramos@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_carlos_mendoza" model="res.partner">
+            <field name="name">Carlos Mendoza</field>
+            <field name="street">147 Aguinaldo Highway</field>
+            <field name="city">Cavite</field>
+            <field name="zip">4100</field>
+            <field name="phone">+63 923 789 0123</field>
+            <field name="email">carlos.mendoza@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <record id="pawn_customer_sofia_torres" model="res.partner">
+            <field name="name">Sofia Torres</field>
+            <field name="street">258 Roxas Boulevard</field>
+            <field name="city">Pasay</field>
+            <field name="zip">1300</field>
+            <field name="phone">+63 924 890 1234</field>
+            <field name="email">sofia.torres@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+    </data>
+</odoo>

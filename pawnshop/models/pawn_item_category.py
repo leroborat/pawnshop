@@ -105,7 +105,7 @@ class PawnItemCategory(models.Model):
     @api.constrains('parent_id')
     def _check_category_recursion(self):
         """Prevent circular references in category hierarchy"""
-        if not self._check_recursion():
+        if self._has_cycle():
             raise ValidationError(_('You cannot create recursive categories.'))
 
     @api.constrains('code')
@@ -140,3 +140,15 @@ class PawnItemCategory(models.Model):
                 name = f"[{record.code}] {record.name}"
             result.append((record.id, name))
         return result
+
+    def action_view_items(self):
+        """View all items in this category"""
+        # Placeholder - will be implemented in Phase 2 when pawn.ticket.line model is created
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Items',
+            'res_model': 'pawn.ticket.line',
+            'view_mode': 'list,form',
+            'domain': [('category_id', '=', self.id)],
+            'context': {'default_category_id': self.id}
+        }

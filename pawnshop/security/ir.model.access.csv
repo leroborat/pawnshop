@@ -16,3 +16,15 @@ access_pawn_rate_table_line_cashier,pawn.rate.table.line.cashier,model_pawn_rate
 access_pawn_rate_table_line_manager,pawn.rate.table.line.manager,model_pawn_rate_table_line,group_pawn_manager,1,1,0,0
 access_pawn_rate_table_line_admin,pawn.rate.table.line.admin,model_pawn_rate_table_line,group_pawn_admin,1,1,1,1
 access_pawn_rate_table_line_auditor,pawn.rate.table.line.auditor,model_pawn_rate_table_line,group_pawn_auditor,1,0,0,0
+access_pawn_ticket_cashier,pawn.ticket.cashier,model_pawn_ticket,group_pawn_cashier,1,1,1,0
+access_pawn_ticket_appraiser,pawn.ticket.appraiser,model_pawn_ticket,group_pawn_appraiser,1,1,1,0
+access_pawn_ticket_manager,pawn.ticket.manager,model_pawn_ticket,group_pawn_manager,1,1,1,1
+access_pawn_ticket_accountant,pawn.ticket.accountant,model_pawn_ticket,group_pawn_accountant,1,0,0,0
+access_pawn_ticket_auditor,pawn.ticket.auditor,model_pawn_ticket,group_pawn_auditor,1,0,0,0
+access_pawn_ticket_admin,pawn.ticket.admin,model_pawn_ticket,group_pawn_admin,1,1,1,1
+access_pawn_ticket_line_cashier,pawn.ticket.line.cashier,model_pawn_ticket_line,group_pawn_cashier,1,1,1,0
+access_pawn_ticket_line_appraiser,pawn.ticket.line.appraiser,model_pawn_ticket_line,group_pawn_appraiser,1,1,1,0
+access_pawn_ticket_line_manager,pawn.ticket.line.manager,model_pawn_ticket_line,group_pawn_manager,1,1,1,1
+access_pawn_ticket_line_accountant,pawn.ticket.line.accountant,model_pawn_ticket_line,group_pawn_accountant,1,0,0,0
+access_pawn_ticket_line_auditor,pawn.ticket.line.auditor,model_pawn_ticket_line,group_pawn_auditor,1,0,0,0
+access_pawn_ticket_line_admin,pawn.ticket.line.admin,model_pawn_ticket_line,group_pawn_admin,1,1,1,1

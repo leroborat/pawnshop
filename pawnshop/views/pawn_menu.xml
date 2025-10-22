@@ -33,30 +33,55 @@
                   groups="group_pawn_admin"/>
 
         <!-- Operations Submenus -->
-        <!-- Placeholder for Pawn Tickets (Phase 2) -->
-        <!-- <menuitem id="menu_pawnshop_ticket"
+        <menuitem id="menu_pawnshop_ticket"
                   name="Pawn Tickets"
                   parent="menu_pawnshop_operations"
                   action="action_pawn_ticket"
-                  sequence="10"/> -->
-        <!-- Note: action_pawn_ticket will be defined in Phase 2 -->
+                  sequence="10"/>
+
+        <menuitem id="menu_pawnshop_ticket_active"
+                  name="Active Tickets"
+                  parent="menu_pawnshop_operations"
+                  action="action_pawn_ticket"
+                  sequence="11"/>
+
+        <menuitem id="menu_pawnshop_ticket_due_today"
+                  name="Due Today"
+                  parent="menu_pawnshop_operations"
+                  action="action_pawn_ticket"
+                  sequence="12"/>
+
+        <menuitem id="menu_pawnshop_ticket_overdue"
+                  name="Overdue"
+                  parent="menu_pawnshop_operations"
+                  action="action_pawn_ticket"
+                  sequence="13"/>
 
         <!-- Inventory Submenus -->
-        <!-- Placeholder for Inventory views (Phase 3) -->
-        <!-- <menuitem id="menu_pawnshop_custody"
-                  name="Collateral in Custody"
+        <menuitem id="menu_pawnshop_custody"
+                  name="Items in Custody"
                   parent="menu_pawnshop_inventory"
+                  action="action_pawn_items_in_custody"
                   sequence="10"/>
 
         <menuitem id="menu_pawnshop_forfeited"
                   name="Forfeited Inventory"
                   parent="menu_pawnshop_inventory"
+                  action="action_pawn_forfeited_inventory"
                   sequence="20"/>
 
-        <menuitem id="menu_pawnshop_auction"
-                  name="Auction"
+        <menuitem id="menu_pawnshop_stock_moves"
+                  name="Custody Movements"
                   parent="menu_pawnshop_inventory"
-                  sequence="30"/> -->
+                  action="action_pawn_stock_moves_custody"
+                  sequence="30"
+                  groups="group_pawn_manager,group_pawn_admin"/>
+
+        <menuitem id="menu_pawnshop_auction"
+                  name="Auction Staging"
+                  parent="menu_pawnshop_inventory"
+                  sequence="40"/>
+                  <!-- Auction action will be added in Phase 5 -->
 
         <!-- Configuration Submenus -->
         <menuitem id="menu_pawnshop_config_branches"

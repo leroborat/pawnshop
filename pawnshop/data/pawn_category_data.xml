@@ -114,9 +114,9 @@
             <field name="description">Wristwatches and timepieces</field>
         </record>
 
-        <!-- Bags & Accessories -->
+        <!-- Bags and Accessories -->
         <record id="category_bags" model="pawn.item.category">
-            <field name="name">Bags & Accessories</field>
+            <field name="name">Bags and Accessories</field>
             <field name="code">BAGS</field>
             <field name="sequence">60</field>
             <field name="default_loan_to_value_ratio">50.0</field>

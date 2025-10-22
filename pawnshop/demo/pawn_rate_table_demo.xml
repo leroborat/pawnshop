@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Demo Rate Tables -->
+        
+        <!-- Standard Rate Table -->
+        <record id="pawn_rate_table_standard" model="pawn.rate.table">
+            <field name="name">Standard Rates 2025</field>
+            <field name="code">STD2025</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Standard Rate Lines -->
+        <record id="pawn_rate_line_jewelry_low" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">10000</field>
+            <field name="rate_percent">3.5</field>
+        </record>
+
+        <record id="pawn_rate_line_jewelry_mid" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="amount_from">10001</field>
+            <field name="amount_to">50000</field>
+            <field name="rate_percent">3.0</field>
+        </record>
+
+        <record id="pawn_rate_line_jewelry_high" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="amount_from">50001</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">2.5</field>
+        </record>
+
+        <record id="pawn_rate_line_electronics_low" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_electronics"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">20000</field>
+            <field name="rate_percent">4.0</field>
+        </record>
+
+        <record id="pawn_rate_line_electronics_high" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_electronics"/>
+            <field name="amount_from">20001</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">3.5</field>
+        </record>
+
+        <record id="pawn_rate_line_mobile_phones" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_mobile_phones"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">4.5</field>
+        </record>
+
+        <record id="pawn_rate_line_tools" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_standard"/>
+            <field name="category_id" ref="pawnshop.category_tools"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">4.0</field>
+        </record>
+
+        <!-- Premium Rate Table (Lower Rates) -->
+        <record id="pawn_rate_table_premium" model="pawn.rate.table">
+            <field name="name">Premium Customer Rates</field>
+            <field name="code">PREM2025</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="pawn_rate_line_premium_jewelry" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_premium"/>
+            <field name="category_id" ref="pawnshop.category_gold_jewelry"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">2.5</field>
+        </record>
+
+        <record id="pawn_rate_line_premium_electronics" model="pawn.rate.table.line">
+            <field name="rate_table_id" ref="pawn_rate_table_premium"/>
+            <field name="category_id" ref="pawnshop.category_electronics"/>
+            <field name="amount_from">0</field>
+            <field name="amount_to">0</field>
+            <field name="rate_percent">3.0</field>
+        </record>
+
+    </data>
+</odoo>

@@ -114,11 +114,17 @@ class PawnBranch(models.Model):
 
     def _compute_statistics(self):
         """Compute ticket statistics for each branch"""
-        # Placeholder - will be implemented when pawn.ticket model is created
+        from datetime import date
+
         for record in self:
-            record.ticket_count = 0
-            record.due_today_count = 0
-            record.overdue_count = 0
+            tickets = self.env['pawn.ticket'].search([
+                ('branch_id', '=', record.id),
+                ('state', 'in', ('pledged', 'renewed'))
+            ])
+
+            record.ticket_count = len(tickets)
+            record.due_today_count = len(tickets.filtered('is_due_today'))
+            record.overdue_count = len(tickets.filtered(lambda t: t.is_overdue and not t.is_in_grace))
 
     @api.model
     def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None):
@@ -136,3 +142,41 @@ class PawnBranch(models.Model):
             name = f"[{record.code}] {record.name}"
             result.append((record.id, name))
         return result
+
+    def action_view_tickets(self):
+        """View all tickets for this branch"""
+        # Placeholder - will be implemented in Phase 2 when pawn.ticket model is created
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Pawn Tickets',
+            'res_model': 'pawn.ticket',
+            'view_mode': 'list,form',
+            'domain': [('branch_id', '=', self.id)],
+            'context': {'default_branch_id': self.id}
+        }
+
+    def action_view_due_today(self):
+        """View tickets due today for this branch"""
+        # Placeholder - will be implemented in Phase 2
+        today = fields.Date.context_today(self)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Tickets Due Today',
+            'res_model': 'pawn.ticket',
+            'view_mode': 'list,form',
+            'domain': [('branch_id', '=', self.id), ('maturity_date', '=', today)],
+            'context': {'default_branch_id': self.id}
+        }
+
+    def action_view_overdue(self):
+        """View overdue tickets for this branch"""
+        # Placeholder - will be implemented in Phase 2
+        today = fields.Date.context_today(self)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Overdue Tickets',
+            'res_model': 'pawn.ticket',
+            'view_mode': 'list,form',
+            'domain': [('branch_id', '=', self.id), ('maturity_date', '<', today), ('state', 'in', ['pledged', 'grace'])],
+            'context': {'default_branch_id': self.id}
+        }

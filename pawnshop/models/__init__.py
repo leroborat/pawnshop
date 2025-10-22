@@ -2,3 +2,7 @@ from . import pawn_branch
 from . import pawn_item_category
 from . import pawn_rate_table
 from . import res_config_settings
+from . import res_users
+from . import pawn_ticket
+from . import pawn_ticket_line
+from . import stock_move

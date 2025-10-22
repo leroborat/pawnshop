@@ -40,17 +40,26 @@ Complete solution for pawnshop operations including:
         'data/pawn_sequence.xml',
         'data/pawn_category_data.xml',
         'data/pawn_stock_location.xml',
+        'data/pawn_product_data.xml',
 
         # Views
-        'views/pawn_branch_views.xml',
         'views/pawn_item_category_views.xml',
         'views/pawn_rate_table_views.xml',
+        'views/pawn_ticket_views.xml',
+        'views/pawn_branch_views.xml',
+        'views/pawn_inventory_views.xml',
         'views/res_config_settings_views.xml',
         'views/pawn_menu.xml',
     ],
 
     # Demo data
-    'demo': [],
+    'demo': [
+        'demo/demo.xml',
+        'demo/pawn_branch_demo.xml',
+        'demo/pawn_rate_table_demo.xml',
+        'demo/res_partner_demo.xml',
+        'demo/pawn_ticket_demo.xml',
+    ],
 
     'installable': True,
     'application': True,

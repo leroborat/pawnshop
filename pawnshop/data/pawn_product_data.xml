@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Default Product Category for Pawnshop Services -->
+        <record id="product_category_pawnshop_services" model="product.category">
+            <field name="name">Pawnshop Services</field>
+        </record>
+
+        <!-- Product Category for Pawned Items (Storable) -->
+        <record id="product_category_pawned_items" model="product.category">
+            <field name="name">Pawned Items</field>
+        </record>
+
+        <!-- Interest Income Product -->
+        <record id="product_pawn_interest_income" model="product.product">
+            <field name="name">Pawn Interest Income</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product_category_pawnshop_services"/>
+            <field name="list_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+        </record>
+
+        <!-- Penalty Fee Product -->
+        <record id="product_pawn_penalty_fee" model="product.product">
+            <field name="name">Pawn Penalty Fee</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product_category_pawnshop_services"/>
+            <field name="list_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+        </record>
+
+        <!-- Service Fee Product -->
+        <record id="product_pawn_service_fee" model="product.product">
+            <field name="name">Pawn Service Fee</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="product_category_pawnshop_services"/>
+            <field name="list_price">0.0</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+        </record>
+
+    </data>
+
+    <!-- System parameters with noupdate - only set if not already configured -->
+    <data noupdate="1">
+        <record id="default_interest_product_param" model="ir.config_parameter">
+            <field name="key">pawnshop.interest_product_id</field>
+            <field name="value" eval="ref('product_pawn_interest_income')"/>
+        </record>
+
+        <record id="default_penalty_product_param" model="ir.config_parameter">
+            <field name="key">pawnshop.penalty_product_id</field>
+            <field name="value" eval="ref('product_pawn_penalty_fee')"/>
+        </record>
+
+        <record id="default_service_fee_product_param" model="ir.config_parameter">
+            <field name="key">pawnshop.service_fee_product_id</field>
+            <field name="value" eval="ref('product_pawn_service_fee')"/>
+        </record>
+    </data>
+</odoo>

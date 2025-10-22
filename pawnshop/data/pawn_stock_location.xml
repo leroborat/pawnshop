@@ -2,12 +2,15 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Parent Location for all Pawn Locations -->
+        <!-- Note: Stock locations will be created per warehouse.
+             These are template/default locations that branches can reference.
+             In Phase 2, we'll create branch-specific locations programmatically. -->
+
+        <!-- Parent Location for all Pawn Locations (no parent - top level) -->
         <record id="stock_location_pawn" model="stock.location">
             <field name="name">Pawn Operations</field>
             <field name="usage">view</field>
-            <field name="location_id" ref="stock.stock_location_locations"/>
-            <field name="comment">Parent location for all pawnshop inventory locations</field>
+            <field name="company_id" eval="False"/>
         </record>
 
         <!-- Pawn Collateral (Custody) Location -->
@@ -15,7 +18,7 @@
             <field name="name">Pawn Collateral (Custody)</field>
             <field name="usage">internal</field>
             <field name="location_id" ref="stock_location_pawn"/>
-            <field name="comment">Items currently held as collateral - customer-owned, in custody</field>
+            <field name="company_id" eval="False"/>
         </record>
 
         <!-- Forfeited Inventory Location -->
@@ -23,7 +26,7 @@
             <field name="name">Forfeited Inventory</field>
             <field name="usage">internal</field>
             <field name="location_id" ref="stock_location_pawn"/>
-            <field name="comment">Forfeited items - company-owned, available for sale</field>
+            <field name="company_id" eval="False"/>
         </record>
 
         <!-- Auction Staging Location -->
@@ -31,15 +34,14 @@
             <field name="name">Auction Staging</field>
             <field name="usage">internal</field>
             <field name="location_id" ref="stock_location_pawn"/>
-            <field name="comment">Items staged for auction - ready for bidding</field>
+            <field name="company_id" eval="False"/>
         </record>
 
-        <!-- Customer Return Location (Virtual) -->
+        <!-- Customer Return Location (Virtual) - uses standard customer location -->
         <record id="stock_location_pawn_customer_return" model="stock.location">
             <field name="name">Pawn Customer Returns</field>
             <field name="usage">customer</field>
-            <field name="location_id" ref="stock.stock_location_locations_virtual"/>
-            <field name="comment">Virtual location for redeemed items returned to customers</field>
+            <field name="company_id" eval="False"/>
         </record>
 
     </data>

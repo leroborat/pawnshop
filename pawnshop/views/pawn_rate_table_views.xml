@@ -43,7 +43,7 @@
                         <group string="Applicable Branches">
                             <field name="branch_ids" nolabel="1" widget="many2many_tags"
                                    placeholder="Leave empty to apply to all branches"
-                                   options="{'color_field': 'color', 'no_create': True}"/>
+                                   options="{'no_create': True}"/>
                         </group>
                         <notebook>
                             <page string="Rate Lines" name="rate_lines">
@@ -76,18 +76,19 @@
             <field name="model">pawn.rate.table</field>
             <field name="arch" type="xml">
                 <search string="Search Rate Tables">
-                    <field name="name" string="Rate Table"
-                           filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="name"/>
+                    <field name="code"/>
                     <field name="branch_ids"/>
-                    <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
-                    <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
-                    <separator/>
-                    <filter string="Currently Valid" name="filter_current_valid"
-                            domain="[('date_from', '&lt;=', context_today().strftime('%Y-%m-%d')),
-                                     '|', ('date_to', '=', False), ('date_to', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Company" name="group_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
-                        <filter string="Valid From" name="group_date_from" context="{'group_by': 'date_from'}"/>
+                    <group>
+                        <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                        <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
+                        <filter string="Currently Valid" name="filter_current_valid"
+                                domain="[('date_from', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                         '|', ('date_to', '=', False), ('date_to', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                    </group>
+                    <group>
+                        <filter string="Company" name="group_company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Valid From" name="group_date_from" context="{'group_by':'date_from'}"/>
                     </group>
                 </search>
             </field>

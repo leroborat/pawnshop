@@ -30,11 +30,12 @@
             <field name="arch" type="xml">
                 <form string="Branch">
                     <header>
-                        <button name="%(action_pawn_ticket_new)d"
-                                string="New Ticket"
+                        <button name="%(action_pawn_ticket)d"
                                 type="action"
-                                class="oe_highlight"
-                                invisible="not active"/>
+                                string="New Ticket"
+                                class="btn-primary"
+                                context="{'default_branch_id': id}"
+                                groups="pawnshop.group_pawn_cashier"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -159,19 +160,17 @@
             <field name="model">pawn.branch</field>
             <field name="arch" type="xml">
                 <search string="Search Branches">
-                    <field name="name" string="Branch"
-                           filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="name"/>
+                    <field name="code"/>
                     <field name="city"/>
                     <field name="manager_id"/>
-                    <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
-                    <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
-                    <separator/>
-                    <filter string="Has Due Today" name="filter_due_today" domain="[('due_today_count', '>', 0)]"/>
-                    <filter string="Has Overdue" name="filter_overdue" domain="[('overdue_count', '>', 0)]"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Manager" name="group_manager" context="{'group_by': 'manager_id'}"/>
-                        <filter string="City" name="group_city" context="{'group_by': 'city'}"/>
-                        <filter string="Company" name="group_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                    <group>
+                        <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                        <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
+                    </group>
+                    <group>
+                        <filter string="Manager" name="group_manager" context="{'group_by':'manager_id'}"/>
+                        <filter string="City" name="group_city" context="{'group_by':'city'}"/>
                     </group>
                 </search>
             </field>

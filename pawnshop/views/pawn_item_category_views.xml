@@ -129,17 +129,18 @@
             <field name="model">pawn.item.category</field>
             <field name="arch" type="xml">
                 <search string="Search Categories">
-                    <field name="name" string="Category"
-                           filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="name"/>
+                    <field name="code"/>
                     <field name="parent_id"/>
-                    <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
-                    <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
-                    <separator/>
-                    <filter string="Top Level" name="filter_top_level" domain="[('parent_id', '=', False)]"/>
-                    <filter string="Requires Serial" name="filter_requires_serial" domain="[('requires_serial', '=', True)]"/>
-                    <filter string="Requires Photo" name="filter_requires_photo" domain="[('requires_photo', '=', True)]"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Parent Category" name="group_parent" context="{'group_by': 'parent_id'}"/>
+                    <group>
+                        <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                        <filter string="Archived" name="filter_inactive" domain="[('active', '=', False)]"/>
+                        <filter string="Top Level" name="filter_top_level" domain="[('parent_id', '=', False)]"/>
+                        <filter string="Requires Serial" name="filter_requires_serial" domain="[('requires_serial', '=', True)]"/>
+                        <filter string="Requires Photo" name="filter_requires_photo" domain="[('requires_photo', '=', True)]"/>
+                    </group>
+                    <group>
+                        <filter string="Parent Category" name="group_parent" context="{'group_by':'parent_id'}"/>
                     </group>
                 </search>
             </field>

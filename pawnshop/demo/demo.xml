@@ -1,30 +1,16 @@
 <odoo>
     <data>
-<!--
-          <record id="object0" model="pawnshop.pawnshop">
-            <field name="name">Object 0</field>
-            <field name="value">0</field>
-          </record>
-
-          <record id="object1" model="pawnshop.pawnshop">
-            <field name="name">Object 1</field>
-            <field name="value">10</field>
-          </record>
-
-          <record id="object2" model="pawnshop.pawnshop">
-            <field name="name">Object 2</field>
-            <field name="value">20</field>
-          </record>
-
-          <record id="object3" model="pawnshop.pawnshop">
-            <field name="name">Object 3</field>
-            <field name="value">30</field>
-          </record>
-
-          <record id="object4" model="pawnshop.pawnshop">
-            <field name="name">Object 4</field>
-            <field name="value">40</field>
-          </record>
--->
+        <!-- 
+        Demo data is organized in separate files:
+        - pawn_branch_demo.xml: 3 demo branches
+        - pawn_rate_table_demo.xml: 2 rate tables with multiple rate lines
+        - res_partner_demo.xml: 8 demo customers
+        - pawn_ticket_demo.xml: 8 demo tickets with various states
+        
+        To load demo data:
+        1. Enable Developer Mode
+        2. Go to Settings > Technical > Database Structure > Update Apps List
+        3. Or install/upgrade the module with demo data enabled
+        -->
     </data>
 </odoo>
