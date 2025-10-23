@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- Maturity Reminder -->
+    <record id="mail_tmpl_pawn_maturity_reminder" model="mail.template">
+      <field name="name">Pawn - Maturity Reminder</field>
+      <field name="model_id" ref="pawnshop.model_pawn_ticket"/>
+      <field name="subject">Reminder: Ticket ${object.ticket_no or ''} matures on ${format_date(object.date_maturity)}</field>
+      <field name="email_from">${(object.company_id.email or '')|safe}</field>
+      <field name="email_to">${(object.customer_id.email or '')|safe}</field>
+      <field name="auto_delete" eval="False"/>
+      <field name="body_html"><![CDATA[
+<p>Hi ${object.customer_id.name or 'Customer'},</p>
+<p>This is a friendly reminder that your pawn ticket <strong>${object.ticket_no or ''}</strong> will mature on <strong>${format_date(object.date_maturity)}</strong>.</p>
+<p>You may renew or redeem at <strong>${object.branch_id.name or 'our branch'}</strong>.</p>
+<p>Thank you.</p>
+]]></field>
+    </record>
+
+    <!-- Grace Period Warning -->
+    <record id="mail_tmpl_pawn_grace_warning" model="mail.template">
+      <field name="name">Pawn - Grace Period Warning</field>
+      <field name="model_id" ref="pawnshop.model_pawn_ticket"/>
+      <field name="subject">Grace Period Ending: Ticket ${object.ticket_no or ''}</field>
+      <field name="email_from">${(object.company_id.email or '')|safe}</field>
+      <field name="email_to">${(object.customer_id.email or '')|safe}</field>
+      <field name="auto_delete" eval="False"/>
+      <field name="body_html"><![CDATA[
+<p>Hi ${object.customer_id.name or 'Customer'},</p>
+<p>The grace period for your pawn ticket <strong>${object.ticket_no or ''}</strong> is ending on <strong>${format_date(object.date_maturity)}</strong>. Penalties may apply after the grace period.</p>
+<p>Please visit <strong>${object.branch_id.name or 'our branch'}</strong> to renew or redeem.</p>
+<p>Thank you.</p>
+]]></field>
+    </record>
+
+    <!-- Forfeiture Notice -->
+    <record id="mail_tmpl_pawn_forfeiture_notice" model="mail.template">
+      <field name="name">Pawn - Forfeiture Notice</field>
+      <field name="model_id" ref="pawnshop.model_pawn_ticket"/>
+      <field name="subject">Forfeiture Notice: Ticket ${object.ticket_no or ''}</field>
+      <field name="email_from">${(object.company_id.email or '')|safe}</field>
+      <field name="email_to">${(object.customer_id.email or '')|safe}</field>
+      <field name="auto_delete" eval="False"/>
+      <field name="body_html"><![CDATA[
+<p>Hi ${object.customer_id.name or 'Customer'},</p>
+<p>Your pawn ticket <strong>${object.ticket_no or ''}</strong> has been forfeited as of <strong>${format_date(object.date_maturity)}</strong>. Items may be scheduled for auction.</p>
+<p>For questions, contact <strong>${object.branch_id.name or object.company_id.name}</strong>.</p>
+<p>Thank you.</p>
+]]></field>
+    </record>
+
+    <!-- Auction Announcement -->
+    <record id="mail_tmpl_pawn_auction_announcement" model="mail.template">
+      <field name="name">Pawn - Auction Announcement</field>
+      <field name="model_id" ref="pawnshop.model_pawn_ticket"/>
+      <field name="subject">Auction Announcement - ${object.branch_id.name or object.company_id.name}</field>
+      <field name="email_from">${(object.company_id.email or '')|safe}</field>
+      <field name="email_to">${(object.customer_id.email or '')|safe}</field>
+      <field name="auto_delete" eval="False"/>
+      <field name="body_html"><![CDATA[
+<p>Public Auction Announcement</p>
+<p>Where: <strong>${object.branch_id.name or object.company_id.name}</strong></p>
+<p>When: <strong>${format_date(object.date_maturity) or ''}</strong></p>
+<p>Items include jewelry, gadgets, and tools.</p>
+<p>Thank you.</p>
+]]></field>
+    </record>
+
+  </data>
+</odoo>

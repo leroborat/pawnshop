@@ -152,5 +152,34 @@
                   sequence="90"
                   groups="group_pawn_admin"/>
 
+        <!-- Configuration: Email Templates (pawn.ticket) -->
+        <record id="action_pawn_mail_templates" model="ir.actions.act_window">
+          <field name="name">Email Templates</field>
+          <field name="res_model">mail.template</field>
+          <field name="view_mode">list,form</field>
+          <field name="domain">[("model_id.model", "=", "pawn.ticket")]</field>
+          <field name="context">{"search_default_model_pawn_ticket": 1}</field>
+        </record>
+        <menuitem id="menu_pawnshop_config_mail_templates"
+                  name="Email Templates"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_mail_templates"
+                  sequence="95"
+                  groups="group_pawn_admin"/>
+
+        <!-- Configuration: Scheduled Actions (Crons) -->
+        <record id="action_pawn_scheduled_actions" model="ir.actions.act_window">
+          <field name="name">Scheduled Actions</field>
+          <field name="res_model">ir.cron</field>
+          <field name="view_mode">list,form</field>
+          <field name="domain">[("name", "ilike", "Pawnshop - ")]</field>
+        </record>
+        <menuitem id="menu_pawnshop_config_crons"
+                  name="Scheduled Actions"
+                  parent="menu_pawnshop_configuration"
+                  action="action_pawn_scheduled_actions"
+                  sequence="96"
+                  groups="group_pawn_admin"/>
+
     </data>
 </odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- Maturity Reminder (daily 08:00) -->
+    <record id="cron_pawn_maturity_reminder" model="ir.cron">
+      <field name="name">Pawnshop - Maturity Reminder</field>
+      <field name="model_id" ref="pawnshop.model_pawn_notification"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_maturity_reminder()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active">True</field>
+    </record>
+
+    <!-- Grace Period Warning (daily 08:00) -->
+    <record id="cron_pawn_grace_warning" model="ir.cron">
+      <field name="name">Pawnshop - Grace Period Warning</field>
+      <field name="model_id" ref="pawnshop.model_pawn_notification"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_grace_warning()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active">True</field>
+    </record>
+
+    <!-- Forfeiture Notice (daily 09:00) -->
+    <record id="cron_pawn_forfeiture_notice" model="ir.cron">
+      <field name="name">Pawnshop - Forfeiture Notice</field>
+      <field name="model_id" ref="pawnshop.model_pawn_notification"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_forfeiture_notice()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">days</field>
+      <field name="active">True</field>
+    </record>
+
+    <!-- Auction Announcement (weekly Monday 09:00) -->
+    <record id="cron_pawn_auction_announcement" model="ir.cron">
+      <field name="name">Pawnshop - Weekly Auction Announcement</field>
+      <field name="model_id" ref="pawnshop.model_pawn_notification"/>
+      <field name="state">code</field>
+      <field name="code">model.cron_auction_announcement()</field>
+      <field name="interval_number">1</field>
+      <field name="interval_type">weeks</field>
+      <field name="active">True</field>
+    </record>
+
+  </data>
+</odoo>

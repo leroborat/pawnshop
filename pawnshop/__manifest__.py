@@ -41,6 +41,8 @@ Complete solution for pawnshop operations including:
         'data/pawn_category_data.xml',
         'data/pawn_stock_location.xml',
         'data/pawn_product_data.xml',
+        'data/pawn_mail_templates.xml',
+        'data/pawn_cron.xml',
 
         # Views
         'views/pawn_item_category_views.xml',
