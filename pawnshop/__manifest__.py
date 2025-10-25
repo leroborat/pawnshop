@@ -18,9 +18,7 @@ branch-aware security, and Philippine-ready reports.
 
     # show your static/description/index.html and images
     'images': [
-        'static/description/icon.png',
         'static/description/odooimagesmall.gif',
-        'static/description/odooimagebig.gif',
     ],
 
     # Dependencies
