@@ -7,11 +7,14 @@ Complete pawnshop solution for appraisers, cashiers, and administrators.
 Includes full ticket lifecycle, renewals, redemptions, forfeitures, auctions,
 branch-aware security, and Philippine-ready reports.
     """,
-    'author': "iBAS Software Inc.",
+    'author': "iBAS Software, Rein on Odoo",
     'website': "https://www.ibasuite.com/",
     'category': 'Sales',
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
+    'price': 999.00,
+    'currency': 'EUR',
+    'support': '1@reinonodoo.com',
 
     # show your static/description/index.html and images
     'images': [
