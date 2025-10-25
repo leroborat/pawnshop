@@ -1,42 +1,41 @@
+# -*- coding: utf-8 -*-
 {
     'name': "Pawnshop Management System",
     'summary': "Comprehensive pawnshop management with inventory and invoicing integration",
     'description': """
-Pawnshop Management System
-==========================
-Complete solution for pawnshop operations including:
-* Multi-branch support with security
-* Pawn ticket management with automated workflows
-* Inventory tracking for collateral and forfeited items
-* Invoicing integration for renewals, redemptions, and sales
-* Rate tables and interest calculations
-* KYC management and reporting
-* Notifications and automated reminders
+Complete pawnshop solution for appraisers, cashiers, and administrators.
+Includes full ticket lifecycle, renewals, redemptions, forfeitures, auctions,
+branch-aware security, and Philippine-ready reports.
     """,
-    'author': "Custom Development",
-    'website': "https://www.yourcompany.com",
+    'author': "iBAS Software Inc.",
+    'website': "https://www.ibasuite.com/",
     'category': 'Sales',
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
 
-    # Module dependencies
-    'depends': [
-        'base',
-        'account',      # Invoicing (Community)
-        'stock',        # Inventory Management
-        'product',      # Product Management
-        'contacts',     # Customer Management
-        'web',          # Web Interface
-        'mail',         # Notifications
+    # show your static/description/index.html and images
+    'images': [
+        'static/description/icon.png',
+        'static/description/odooiamgesmall.gif',
+        'static/description/odooiamgebig.gif',
     ],
 
-    # Data files loaded in order
+    # Dependencies
+    'depends': [
+        'base',
+        'account',
+        'stock',
+        'product',
+        'contacts',
+        'web',
+        'mail',
+    ],
+
+    # Data files
     'data': [
-        # Security
         'security/pawn_security.xml',
         'security/ir.model.access.csv',
 
-        # Data
         'data/pawn_sequence.xml',
         'data/pawn_category_data.xml',
         'data/pawn_stock_location.xml',
@@ -44,7 +43,6 @@ Complete solution for pawnshop operations including:
         'data/pawn_mail_templates.xml',
         'data/pawn_cron.xml',
 
-        # Views
         'views/pawn_item_category_views.xml',
         'views/pawn_rate_table_views.xml',
         'views/pawn_ticket_views.xml',
@@ -58,7 +56,6 @@ Complete solution for pawnshop operations including:
         'views/pawn_dashboard_views.xml',
         'views/pawn_menu.xml',
 
-        # Reports (PDF)
         'reports/pawn_ticket_report.xml',
         'reports/pawn_renewal_receipt_report.xml',
         'reports/pawn_redemption_receipt_report.xml',
@@ -78,6 +75,8 @@ Complete solution for pawnshop operations including:
     'installable': True,
     'application': True,
     'auto_install': False,
+
+    # Front-end assets
     'assets': {
         'web.assets_backend': [
             'web/static/lib/Chart/Chart.js',
@@ -87,4 +86,3 @@ Complete solution for pawnshop operations including:
         ],
     },
 }
-
