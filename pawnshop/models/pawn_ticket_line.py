@@ -127,9 +127,9 @@ class PawnTicketLine(models.Model):
         store=True,
     )
     branch_id = fields.Many2one(
-        'pawn.branch',
+        'res.company',
         string='Branch',
-        related='ticket_id.branch_id',
+        related='ticket_id.company_id',
         readonly=True,
         store=True,
     )

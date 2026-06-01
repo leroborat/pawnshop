@@ -66,7 +66,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 4px 6px;"><strong>Branch:</strong></td>
-                                                    <td style="padding: 4px 6px;"><span t-field="o.branch_id.name"/></td>
+                                                    <td style="padding: 4px 6px;"><span t-field="o.company_id.name"/></td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -287,7 +287,7 @@
                             <div class="text-center" style="border-top: 1px solid #e74c3c; padding-top: 5px; margin-top: 5px;">
                                 <p style="margin-bottom: 0; font-size: 7pt; line-height: 1.2;">
                                     <strong><i class="fa fa-exclamation-triangle"/> IMPORTANT:</strong> This form must be completed for every item release. 
-                                    Keep original in branch records. | For inquiries: <span t-field="o.branch_id.phone"/>
+                                    Keep original in branch records. | For inquiries: <span t-field="o.company_id.phone"/>
                                 </p>
                             </div>
 

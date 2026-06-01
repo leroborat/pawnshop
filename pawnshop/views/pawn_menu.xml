@@ -124,6 +124,13 @@
                   <!-- Auction action will be added in Phase 5 -->
 
         <!-- Configuration Submenus -->
+        <record id="action_pawn_branch" model="ir.actions.act_window">
+          <field name="name">Branches</field>
+          <field name="res_model">res.company</field>
+          <field name="view_mode">list,form</field>
+          <field name="domain">[('is_pawn_branch', '=', True)]</field>
+          <field name="context">{'default_is_pawn_branch': True}</field>
+        </record>
         <menuitem id="menu_pawnshop_config_branches"
                   name="Branches"
                   parent="menu_pawnshop_configuration"

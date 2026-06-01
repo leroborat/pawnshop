@@ -31,7 +31,7 @@
                                 <div class="col-6">
                                     <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Notice Date:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/></p>
                                     <p style="margin-bottom: 2px; font-size: 8.5pt;"><strong>Ticket No:</strong> <span t-field="o.ticket_no" class="text-primary"/></p>
-                                    <p style="margin-bottom: 0; font-size: 8.5pt;"><strong>Branch:</strong> <span t-field="o.branch_id.name"/></p>
+                                    <p style="margin-bottom: 0; font-size: 8.5pt;"><strong>Branch:</strong> <span t-field="o.company_id.name"/></p>
                                 </div>
                                 <div class="col-6 text-end">
                                     <img t-att-src="'/report/barcode/QR/%s?width=90&amp;height=90' % o.ticket_no"
@@ -176,9 +176,9 @@
 
                                     <p style="font-size: 8pt; margin-bottom: 2px;"><strong>To redeem your items, please contact:</strong></p>
                                     <ul style="font-size: 7.5pt; margin-bottom: 0; padding-left: 18px;">
-                                        <li style="margin-bottom: 2px;">Branch: <span t-field="o.branch_id.name"/></li>
-                                        <li style="margin-bottom: 2px;">Phone: <span t-field="o.branch_id.phone"/></li>
-                                        <li style="margin-bottom: 0;">Address: <span t-field="o.branch_id.street"/></li>
+                                        <li style="margin-bottom: 2px;">Branch: <span t-field="o.company_id.name"/></li>
+                                        <li style="margin-bottom: 2px;">Phone: <span t-field="o.company_id.phone"/></li>
+                                        <li style="margin-bottom: 0;">Address: <span t-field="o.company_id.street"/></li>
                                     </ul>
                                 </div>
                             </div>
@@ -192,9 +192,9 @@
                                     <div style="border-top: 1px solid #000; display: inline-block; padding: 3px 40px; margin-top: 25px;">
                                         <span style="font-size: 7.5pt;">Authorized Signature</span>
                                     </div>
-                                    <p style="font-size: 8pt; margin-top: 4px; margin-bottom: 1px;"><strong><span t-field="o.branch_id.manager_id.name" t-if="o.branch_id.manager_id"/></strong></p>
+                                    <p style="font-size: 8pt; margin-top: 4px; margin-bottom: 1px;"><strong><span t-field="o.company_id.manager_id.name" t-if="o.company_id.manager_id"/></strong></p>
                                     <p style="font-size: 7.5pt; margin-bottom: 1px;">Branch Manager</p>
-                                    <p style="font-size: 7.5pt; margin-bottom: 0;"><span t-field="o.branch_id.name"/></p>
+                                    <p style="font-size: 7.5pt; margin-bottom: 0;"><span t-field="o.company_id.name"/></p>
                                 </div>
                             </div>
 
@@ -203,7 +203,7 @@
                                 <div class="col-12 text-center text-muted">
                                     <small style="font-size: 7pt;">
                                         <strong>OFFICIAL NOTICE</strong> - Keep for your records<br/>
-                                        <span t-field="o.company_id.name"/> | <span t-field="o.branch_id.phone"/>
+                                        <span t-field="o.company_id.name"/> | <span t-field="o.company_id.phone"/>
                                     </small>
                                 </div>
                             </div>

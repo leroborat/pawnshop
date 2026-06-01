@@ -125,7 +125,7 @@
                        decoration-success="state == 'redeemed'"
                        decoration-danger="state == 'forfeited'"
                        decoration-info="state in ('pledged', 'renewed')"/>
-                <field name="branch_id"/>
+                <field name="branch_id" string="Branch"/>
                 <field name="barcode"/>
             </list>
         </field>

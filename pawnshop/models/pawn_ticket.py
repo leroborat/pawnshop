@@ -51,22 +51,14 @@ class PawnTicket(models.Model):
         help="Customer who pledged the items"
     )
 
-    # Branch & Company
-    branch_id = fields.Many2one(
-        'pawn.branch',
-        string='Branch',
-        required=True,
-        ondelete='restrict',
-        tracking=True,
-        index=True,
-        help="Branch where this ticket was created"
-    )
     company_id = fields.Many2one(
         'res.company',
-        string='Company',
+        string='Branch',
         required=True,
         default=lambda self: self.env.company,
         tracking=True,
+        domain=[('is_pawn_branch', '=', True)],
+        help="Branch (child company) where this ticket was created"
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -593,11 +585,10 @@ class PawnTicket(models.Model):
         """Generate ticket number from sequence"""
         for vals in vals_list:
             if vals.get('ticket_no', _('New')) == _('New'):
-                branch = self.env['pawn.branch'].browse(vals.get('branch_id'))
-                if branch and branch.ticket_sequence_id:
-                    vals['ticket_no'] = branch.ticket_sequence_id.next_by_id()
+                company = self.env['res.company'].browse(vals.get('company_id'))
+                if company and company.ticket_sequence_id:
+                    vals['ticket_no'] = company.ticket_sequence_id.next_by_id()
                 else:
-                    # Fallback to global sequence
                     try:
                         seq = self.env.ref('pawnshop.seq_pawn_ticket')
                     except ValueError:

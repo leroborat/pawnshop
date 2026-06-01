@@ -18,30 +18,33 @@
             <field name="code">NRTH-WH</field>
         </record>
 
-        <!-- Demo Branches -->
-        
+        <!-- Demo Branch Companies (child companies of main company) -->
+
         <!-- Main Branch -->
-        <record id="pawn_branch_main" model="pawn.branch">
+        <record id="pawn_branch_main" model="res.company">
             <field name="name">Main Branch</field>
-            <field name="code">MAIN</field>
+            <field name="is_pawn_branch" eval="True"/>
+            <field name="branch_code">MAIN</field>
+            <field name="parent_id" ref="base.main_company"/>
             <field name="warehouse_id" ref="warehouse_main_branch"/>
-            <field name="active">True</field>
         </record>
 
         <!-- Downtown Branch -->
-        <record id="pawn_branch_downtown" model="pawn.branch">
+        <record id="pawn_branch_downtown" model="res.company">
             <field name="name">Downtown Branch</field>
-            <field name="code">DWTN</field>
+            <field name="is_pawn_branch" eval="True"/>
+            <field name="branch_code">DWTN</field>
+            <field name="parent_id" ref="base.main_company"/>
             <field name="warehouse_id" ref="warehouse_downtown_branch"/>
-            <field name="active">True</field>
         </record>
 
         <!-- Northside Branch -->
-        <record id="pawn_branch_northside" model="pawn.branch">
+        <record id="pawn_branch_northside" model="res.company">
             <field name="name">Northside Branch</field>
-            <field name="code">NRTH</field>
+            <field name="is_pawn_branch" eval="True"/>
+            <field name="branch_code">NRTH</field>
+            <field name="parent_id" ref="base.main_company"/>
             <field name="warehouse_id" ref="warehouse_northside_branch"/>
-            <field name="active">True</field>
         </record>
 
     </data>

@@ -14,9 +14,9 @@ class PawnLoanBookReport(models.Model):
     # Ticket Information
     ticket_id = fields.Many2one('pawn.ticket', string='Ticket', readonly=True)
     ticket_no = fields.Char(string='Ticket No', readonly=True)
-    branch_id = fields.Many2one('pawn.branch', string='Branch', readonly=True)
+    branch_id = fields.Many2one('res.company', string='Branch', readonly=True, domain=[('is_pawn_branch', '=', True)])
     customer_id = fields.Many2one('res.partner', string='Customer', readonly=True)
-    company_id = fields.Many2one('res.company', string='Company', readonly=True)
+    company_id = fields.Many2one('res.company', string='Root Company', readonly=True)
     
     # Dates
     date_created = fields.Datetime(string='Date Created', readonly=True)
@@ -43,7 +43,7 @@ class PawnLoanBookReport(models.Model):
     # Status
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('active', 'Active'),
+        ('pledged', 'Active'),
         ('renewed', 'Renewed'),
         ('redeemed', 'Redeemed'),
         ('forfeited', 'Forfeited'),
@@ -60,7 +60,7 @@ class PawnLoanBookReport(models.Model):
                     pt.id as id,
                     pt.id as ticket_id,
                     pt.ticket_no,
-                    pt.branch_id,
+                    pt.company_id as branch_id,
                     pt.customer_id,
                     pt.date_created,
                     pt.date_pledged,
@@ -68,7 +68,7 @@ class PawnLoanBookReport(models.Model):
                     pt.principal_amount,
                     pt.interest_amount,
                     pt.total_due,
-                    pt.company_id,
+                    c.parent_id as company_id,
                     c.currency_id,
                     pt.state,
                     (SELECT COUNT(*) FROM pawn_ticket_line WHERE ticket_id = pt.id) as item_count,
@@ -103,7 +103,7 @@ class PawnLoanBookReport(models.Model):
                     
                 FROM pawn_ticket pt
                 LEFT JOIN res_company c ON c.id = pt.company_id
-                WHERE pt.state IN ('active', 'renewed')
+                WHERE pt.state IN ('pledged', 'renewed')
             )
         """)
 
@@ -135,7 +135,7 @@ class PawnInterestPenaltySummary(models.Model):
     _order = 'date desc'
 
     date = fields.Date(string='Date', readonly=True)
-    branch_id = fields.Many2one('pawn.branch', string='Branch', readonly=True)
+    branch_id = fields.Many2one('res.company', string='Branch', readonly=True, domain=[('is_pawn_branch', '=', True)])
     cashier_id = fields.Many2one('res.users', string='Cashier', readonly=True)
     
     # Counts
@@ -160,9 +160,9 @@ class PawnInterestPenaltySummary(models.Model):
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW pawn_interest_penalty_summary AS (
                 SELECT 
-                    ROW_NUMBER() OVER (ORDER BY DATE(pt.write_date), pt.branch_id, pt.write_uid) as id,
+                    ROW_NUMBER() OVER (ORDER BY DATE(pt.write_date), pt.company_id, pt.write_uid) as id,
                     DATE(pt.write_date) as date,
-                    pt.branch_id,
+                    pt.company_id as branch_id,
                     pt.write_uid as cashier_id,
                     c.currency_id,
                     
@@ -188,7 +188,7 @@ class PawnInterestPenaltySummary(models.Model):
                 LEFT JOIN res_company c ON c.id = pt.company_id
                 WHERE pt.state IN ('renewed', 'redeemed')
                     AND pt.write_date >= CURRENT_DATE - INTERVAL '90 days'
-                GROUP BY DATE(pt.write_date), pt.branch_id, pt.write_uid, c.currency_id
+                GROUP BY DATE(pt.write_date), pt.company_id, pt.write_uid, c.currency_id
             )
         """)
 
@@ -202,7 +202,7 @@ class PawnTicketRegister(models.Model):
 
     ticket_id = fields.Many2one('pawn.ticket', string='Ticket', readonly=True)
     ticket_no = fields.Char(string='Ticket No', readonly=True)
-    branch_id = fields.Many2one('pawn.branch', string='Branch', readonly=True)
+    branch_id = fields.Many2one('res.company', string='Branch', readonly=True, domain=[('is_pawn_branch', '=', True)])
     customer_id = fields.Many2one('res.partner', string='Customer', readonly=True)
     customer_phone = fields.Char(string='Phone', readonly=True)
     
@@ -218,7 +218,7 @@ class PawnTicketRegister(models.Model):
     
     state = fields.Selection([
         ('draft', 'Draft'),
-        ('active', 'Active'),
+        ('pledged', 'Active'),
         ('renewed', 'Renewed'),
         ('redeemed', 'Redeemed'),
         ('forfeited', 'Forfeited'),
@@ -236,7 +236,7 @@ class PawnTicketRegister(models.Model):
                     pt.id as id,
                     pt.id as ticket_id,
                     pt.ticket_no,
-                    pt.branch_id,
+                    pt.company_id as branch_id,
                     pt.customer_id,
                     rp.phone as customer_phone,
                     pt.date_created,
@@ -266,7 +266,7 @@ class PawnInventoryReport(models.Model):
     _auto = False
     _order = 'branch_id, status, category_id'
 
-    branch_id = fields.Many2one('pawn.branch', string='Branch', readonly=True)
+    branch_id = fields.Many2one('res.company', string='Branch', readonly=True, domain=[('is_pawn_branch', '=', True)])
     category_id = fields.Many2one('pawn.item.category', string='Category', readonly=True)
     
     status = fields.Selection([
@@ -288,21 +288,21 @@ class PawnInventoryReport(models.Model):
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW pawn_inventory_report AS (
                 SELECT 
-                    ROW_NUMBER() OVER (ORDER BY pt.branch_id, 
-                        CASE 
-                            WHEN pt.state IN ('active', 'renewed') THEN 'custody'
+                    ROW_NUMBER() OVER (ORDER BY pt.company_id,
+                        CASE
+                            WHEN pt.state IN ('pledged', 'renewed') THEN 'custody'
                             WHEN pt.state = 'forfeited' THEN 'forfeited'
                             WHEN pt.state = 'redeemed' THEN 'released'
                             ELSE 'custody'
                         END,
                         ptl.category_id
                     ) as id,
-                    pt.branch_id,
+                    pt.company_id as branch_id,
                     ptl.category_id,
                     c.currency_id,
                     
                     CASE 
-                        WHEN pt.state IN ('active', 'renewed') THEN 'custody'
+                        WHEN pt.state IN ('pledged', 'renewed') THEN 'custody'
                         WHEN pt.state = 'forfeited' THEN 'forfeited'
                         WHEN pt.state = 'redeemed' THEN 'released'
                         ELSE 'custody'
@@ -316,10 +316,10 @@ class PawnInventoryReport(models.Model):
                 FROM pawn_ticket pt
                 INNER JOIN pawn_ticket_line ptl ON ptl.ticket_id = pt.id
                 LEFT JOIN res_company c ON c.id = pt.company_id
-                WHERE pt.state IN ('active', 'renewed', 'forfeited', 'redeemed')
-                GROUP BY pt.branch_id, ptl.category_id, c.currency_id,
+                WHERE pt.state IN ('pledged', 'renewed', 'forfeited', 'redeemed')
+                GROUP BY pt.company_id, ptl.category_id, c.currency_id,
                     CASE 
-                        WHEN pt.state IN ('active', 'renewed') THEN 'custody'
+                        WHEN pt.state IN ('pledged', 'renewed') THEN 'custody'
                         WHEN pt.state = 'forfeited' THEN 'forfeited'
                         WHEN pt.state = 'redeemed' THEN 'released'
                         ELSE 'custody'
@@ -335,7 +335,7 @@ class PawnBranchKPI(models.Model):
     _auto = False
     _order = 'branch_id, period_start desc'
 
-    branch_id = fields.Many2one('pawn.branch', string='Branch', readonly=True)
+    branch_id = fields.Many2one('res.company', string='Branch', readonly=True, domain=[('is_pawn_branch', '=', True)])
     period_start = fields.Date(string='Period Start', readonly=True)
     period_end = fields.Date(string='Period End', readonly=True)
     
@@ -369,7 +369,7 @@ class PawnBranchKPI(models.Model):
                     currency_id,
                     
                     -- Volume metrics
-                    COUNT(CASE WHEN state IN ('active', 'renewed', 'redeemed', 'forfeited') THEN 1 END) as new_tickets,
+                    COUNT(CASE WHEN state IN ('pledged', 'renewed', 'redeemed', 'forfeited') THEN 1 END) as new_tickets,
                     COUNT(CASE WHEN state = 'renewed' THEN 1 END) as renewed_tickets,
                     COUNT(CASE WHEN state = 'redeemed' THEN 1 END) as redeemed_tickets,
                     COUNT(CASE WHEN state = 'forfeited' THEN 1 END) as forfeited_tickets,
@@ -399,7 +399,15 @@ class PawnBranchKPI(models.Model):
                     
                 FROM (
                     SELECT 
-                        pt.*,
+                        pt.id,
+                        pt.company_id as branch_id,
+                        pt.state,
+                        pt.principal_amount,
+                        pt.interest_amount,
+                        pt.penalty_amount,
+                        pt.date_pledged,
+                        pt.date_redeemed,
+                        pt.date_created,
                         c.currency_id,
                         DATE_TRUNC('month', pt.date_created)::DATE as period_start,
                         (DATE_TRUNC('month', pt.date_created) + INTERVAL '1 month - 1 day')::DATE as period_end

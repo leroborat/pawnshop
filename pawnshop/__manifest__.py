@@ -51,7 +51,7 @@ branch-aware security, and Philippine-ready reports.
         'views/pawn_intake_wizard_views.xml',
         'views/auction_invoice_wizard_views.xml',
         'views/renew_redeem_wizard_views.xml',
-        'views/pawn_branch_views.xml',
+        'views/res_company_views.xml',
         'views/res_config_settings_views.xml',
         'views/pawn_operational_reports_views.xml',
         'views/pawn_dashboard_views.xml',

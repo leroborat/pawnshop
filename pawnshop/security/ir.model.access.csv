@@ -1,8 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pawn_branch_cashier,pawn.branch.cashier,model_pawn_branch,group_pawn_cashier,1,0,0,0
-access_pawn_branch_manager,pawn.branch.manager,model_pawn_branch,group_pawn_manager,1,1,0,0
-access_pawn_branch_admin,pawn.branch.admin,model_pawn_branch,group_pawn_admin,1,1,1,1
-access_pawn_branch_auditor,pawn.branch.auditor,model_pawn_branch,group_pawn_auditor,1,0,0,0
 access_pawn_item_category_cashier,pawn.item.category.cashier,model_pawn_item_category,group_pawn_cashier,1,0,0,0
 access_pawn_item_category_appraiser,pawn.item.category.appraiser,model_pawn_item_category,group_pawn_appraiser,1,0,0,0
 access_pawn_item_category_manager,pawn.item.category.manager,model_pawn_item_category,group_pawn_manager,1,1,0,0

@@ -46,9 +46,9 @@
                             <div class="alert alert-warning" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 8px 10px; margin-bottom: 8px; font-size: 8.5pt;">
                                 <div class="row">
                                     <div class="col-6">
-                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><strong><i class="fa fa-map-marker" style="font-size: 7pt;"/> Branch:</strong> <span t-field="o.branch_id.name"/></p>
-                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><i class="fa fa-phone" style="font-size: 7pt;"/> <span t-field="o.branch_id.phone"/></p>
-                                        <p style="margin-bottom: 0; font-size: 7.5pt;" class="text-muted"><span t-field="o.branch_id.street"/></p>
+                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><strong><i class="fa fa-map-marker" style="font-size: 7pt;"/> Branch:</strong> <span t-field="o.company_id.name"/></p>
+                                        <p style="margin-bottom: 3px; font-size: 8.5pt;"><i class="fa fa-phone" style="font-size: 7pt;"/> <span t-field="o.company_id.phone"/></p>
+                                        <p style="margin-bottom: 0; font-size: 7.5pt;" class="text-muted"><span t-field="o.company_id.street"/></p>
                                     </div>
                                     <div class="col-6">
                                         <p style="margin-bottom: 3px; font-size: 8.5pt;"><strong><i class="fa fa-calendar-check-o" style="font-size: 7pt;"/> Date Pledged:</strong> <span t-field="o.date_pledged" t-options="{'widget': 'date', 'format': 'MMM dd, yyyy'}"/></p>
@@ -267,7 +267,7 @@
                                 <p class="text-muted" style="margin-bottom: 2px; font-size: 8pt;">
                                     <strong><i class="fa fa-shield" style="font-size: 7pt;"/> This is an official pawn ticket. Keep in a safe place.</strong>
                                 </p>
-                                <p class="text-muted" style="font-size: 7pt; margin-bottom: 0;">For inquiries: <span t-field="o.branch_id.phone"/> | <span t-field="o.branch_id.email"/></p>
+                                <p class="text-muted" style="font-size: 7pt; margin-bottom: 0;">For inquiries: <span t-field="o.company_id.phone"/> | <span t-field="o.company_id.email"/></p>
                             </div>
 
                         </div>

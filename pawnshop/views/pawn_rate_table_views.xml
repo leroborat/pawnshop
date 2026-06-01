@@ -43,7 +43,8 @@
                         <group string="Applicable Branches">
                             <field name="branch_ids" nolabel="1" widget="many2many_tags"
                                    placeholder="Leave empty to apply to all branches"
-                                   options="{'no_create': True}"/>
+                                   options="{'no_create': True}"
+                                   domain="[('is_pawn_branch', '=', True)]"/>
                         </group>
                         <notebook>
                             <page string="Rate Lines" name="rate_lines">
@@ -51,7 +52,7 @@
                                     <list editable="bottom">
                                         <field name="sequence" widget="handle"/>
                                         <field name="category_id" options="{'no_create': True}"/>
-                                        <field name="branch_id" options="{'no_create': True}"/>
+                                        <field name="branch_id" options="{'no_create': True}" domain="[('is_pawn_branch', '=', True)]"/>
                                         <field name="amount_from" widget="monetary"/>
                                         <field name="amount_to" widget="monetary"/>
                                         <field name="currency_id" column_invisible="1"/>

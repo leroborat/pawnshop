@@ -13,7 +13,7 @@
       <field name="body_html"><![CDATA[
 <p>Hi ${object.customer_id.name or 'Customer'},</p>
 <p>This is a friendly reminder that your pawn ticket <strong>${object.ticket_no or ''}</strong> will mature on <strong>${format_date(object.date_maturity)}</strong>.</p>
-<p>You may renew or redeem at <strong>${object.branch_id.name or 'our branch'}</strong>.</p>
+<p>You may renew or redeem at <strong>${object.company_id.name or 'our branch'}</strong>.</p>
 <p>Thank you.</p>
 ]]></field>
     </record>
@@ -29,7 +29,7 @@
       <field name="body_html"><![CDATA[
 <p>Hi ${object.customer_id.name or 'Customer'},</p>
 <p>The grace period for your pawn ticket <strong>${object.ticket_no or ''}</strong> is ending on <strong>${format_date(object.date_maturity)}</strong>. Penalties may apply after the grace period.</p>
-<p>Please visit <strong>${object.branch_id.name or 'our branch'}</strong> to renew or redeem.</p>
+<p>Please visit <strong>${object.company_id.name or 'our branch'}</strong> to renew or redeem.</p>
 <p>Thank you.</p>
 ]]></field>
     </record>
@@ -45,7 +45,7 @@
       <field name="body_html"><![CDATA[
 <p>Hi ${object.customer_id.name or 'Customer'},</p>
 <p>Your pawn ticket <strong>${object.ticket_no or ''}</strong> has been forfeited as of <strong>${format_date(object.date_maturity)}</strong>. Items may be scheduled for auction.</p>
-<p>For questions, contact <strong>${object.branch_id.name or object.company_id.name}</strong>.</p>
+<p>For questions, contact <strong>${object.company_id.name}</strong>.</p>
 <p>Thank you.</p>
 ]]></field>
     </record>
@@ -54,13 +54,13 @@
     <record id="mail_tmpl_pawn_auction_announcement" model="mail.template">
       <field name="name">Pawn - Auction Announcement</field>
       <field name="model_id" ref="pawnshop.model_pawn_ticket"/>
-      <field name="subject">Auction Announcement - ${object.branch_id.name or object.company_id.name}</field>
+      <field name="subject">Auction Announcement - ${object.company_id.name}</field>
       <field name="email_from">${(object.company_id.email or '')|safe}</field>
       <field name="email_to">${(object.customer_id.email or '')|safe}</field>
       <field name="auto_delete" eval="False"/>
       <field name="body_html"><![CDATA[
 <p>Public Auction Announcement</p>
-<p>Where: <strong>${object.branch_id.name or object.company_id.name}</strong></p>
+<p>Where: <strong>${object.company_id.name}</strong></p>
 <p>When: <strong>${format_date(object.date_maturity) or ''}</strong></p>
 <p>Items include jewelry, gadgets, and tools.</p>
 <p>Thank you.</p>

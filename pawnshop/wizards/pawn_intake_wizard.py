@@ -38,16 +38,17 @@ class PawnIntakeWizard(models.TransientModel):
         help="Select existing customer or create new"
     )
     branch_id = fields.Many2one(
-        'pawn.branch',
+        'res.company',
         string='Branch',
         required=True,
         default=lambda self: self._default_branch(),
+        domain=[('is_pawn_branch', '=', True)],
         help="Branch where ticket is created"
     )
     company_id = fields.Many2one(
         'res.company',
         string='Company',
-        default=lambda self: self.env.company,
+        default=lambda self: self.env.company.root_id,
         required=True,
     )
     currency_id = fields.Many2one(
@@ -185,9 +186,11 @@ class PawnIntakeWizard(models.TransientModel):
     def _default_branch(self):
         """Get user's default branch or first available"""
         user = self.env.user
-        if hasattr(user, 'branch_ids') and user.branch_ids:
-            return user.branch_ids[0].id
-        return self.env['pawn.branch'].search([('active', '=', True)], limit=1).id
+        pawn_branches = user.company_ids.filtered('is_pawn_branch')
+        if pawn_branches:
+            return pawn_branches[0].id
+        branch = self.env['res.company'].search([('is_pawn_branch', '=', True)], limit=1)
+        return branch.id if branch else self.env.company.id
 
     @api.model
     def _default_interest_rate(self):
@@ -326,8 +329,7 @@ class PawnIntakeWizard(models.TransientModel):
         # Prepare ticket values
         ticket_vals = {
             'customer_id': self.customer_id.id,
-            'branch_id': self.branch_id.id,
-            'company_id': self.company_id.id,
+            'company_id': self.branch_id.id,
             'date_maturity': self.date_maturity,
             'principal_amount': self.principal_amount,
             'interest_rate': self.interest_rate,

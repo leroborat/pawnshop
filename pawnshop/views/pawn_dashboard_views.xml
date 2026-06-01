@@ -16,7 +16,7 @@
           <sheet>
             <group>
               <group>
-                <field name="branch_id" options="{'no_open': True}"/>
+                <field name="branch_id" options="{'no_open': True}" domain="[('is_pawn_branch', '=', True)]"/>
               </group>
             </group>
             <group>

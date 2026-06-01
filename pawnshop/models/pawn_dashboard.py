@@ -6,7 +6,7 @@ class PawnDashboard(models.TransientModel):
     _description = "Pawnshop Dashboard"
 
     name = fields.Char(default="Pawnshop Dashboard")
-    branch_id = fields.Many2one("pawn.branch", string="Branch")
+    branch_id = fields.Many2one("res.company", string="Branch", domain=[('is_pawn_branch', '=', True)])
 
     active_tickets = fields.Integer(compute="_compute_metrics", store=False)
     due_today = fields.Integer(compute="_compute_metrics", store=False)
@@ -21,8 +21,8 @@ class PawnDashboard(models.TransientModel):
     def default_get(self, fields_list):
         vals = super().default_get(fields_list)
         if "branch_id" in fields_list and not vals.get("branch_id"):
-            user = self.env.user
-            vals["branch_id"] = user.branch_ids[:1].id if hasattr(user, "branch_ids") else False
+            pawn_branches = self.env.user.company_ids.filtered('is_pawn_branch')
+            vals["branch_id"] = pawn_branches[:1].id if pawn_branches else False
         return vals
 
     @api.depends("branch_id")
@@ -31,21 +31,20 @@ class PawnDashboard(models.TransientModel):
         AccountMove = self.env["account.move"].sudo()
         today = fields.Date.context_today(self)
         for rec in self:
-            domain_base = []  # for pawn.ticket (has branch_id)
+            domain_base = []
             if rec.branch_id:
-                domain_base.append(("branch_id", "=", rec.branch_id.id))
+                domain_base.append(("company_id", "=", rec.branch_id.id))
 
-            rec.active_tickets = Ticket.search_count(domain_base + [("state", "in", ["active", "renewed"])])
-            rec.due_today = Ticket.search_count(domain_base + [("date_maturity", "=", today), ("state", "in", ["active", "renewed"])])
-            rec.in_grace = Ticket.search_count(domain_base + [("state", "=", "active"), ("date_maturity", "<", today)])
+            rec.active_tickets = Ticket.search_count(domain_base + [("state", "in", ["pledged", "renewed"])])
+            rec.due_today = Ticket.search_count(domain_base + [("date_maturity", "=", today), ("state", "in", ["pledged", "renewed"])])
+            rec.in_grace = Ticket.search_count(domain_base + [("state", "=", "pledged"), ("date_maturity", "<", today)])
             rec.overdue = Ticket.search_count(domain_base + [("state", "=", "forfeited")])
             rec.forfeited = Ticket.search_count(domain_base + [("state", "=", "forfeited")])
 
             first_day = today.replace(day=1)
             inv_domain = [("move_type", "=", "out_invoice"), ("invoice_date", ">=", first_day)]
-            # Filter by branch via the related pawn ticket if available
             if rec.branch_id:
-                inv_domain.append(("pawn_ticket_id.branch_id", "=", rec.branch_id.id))
+                inv_domain.append(("pawn_ticket_id.company_id", "=", rec.branch_id.id))
             # Consider posted invoices only for KPI stability
             inv_domain.append(("state", "=", "posted"))
             sums = AccountMove.read_group(inv_domain, ["amount_untaxed:sum", "amount_tax:sum"], [])
@@ -57,9 +56,9 @@ class PawnDashboard(models.TransientModel):
     def action_open_tickets(self):
         self.ensure_one()
         action = self.env.ref("pawnshop.action_pawn_ticket").read()[0]
-        domain = [("state", "in", ["active", "renewed"])]
+        domain = [("state", "in", ["pledged", "renewed"])]
         if self.branch_id:
-            domain.append(("branch_id", "=", self.branch_id.id))
+            domain.append(("company_id", "=", self.branch_id.id))
         action["domain"] = domain
         return action
 
@@ -67,9 +66,9 @@ class PawnDashboard(models.TransientModel):
         self.ensure_one()
         action = self.env.ref("pawnshop.action_pawn_ticket").read()[0]
         today = fields.Date.context_today(self)
-        domain = [("date_maturity", "=", today), ("state", "in", ["active", "renewed"])]
+        domain = [("date_maturity", "=", today), ("state", "in", ["pledged", "renewed"])]
         if self.branch_id:
-            domain.append(("branch_id", "=", self.branch_id.id))
+            domain.append(("company_id", "=", self.branch_id.id))
         action["domain"] = domain
         return action
 
@@ -77,9 +76,9 @@ class PawnDashboard(models.TransientModel):
         self.ensure_one()
         action = self.env.ref("pawnshop.action_pawn_ticket").read()[0]
         today = fields.Date.context_today(self)
-        domain = [("date_maturity", "<", today), ("state", "in", ["active", "renewed"])]
+        domain = [("date_maturity", "<", today), ("state", "in", ["pledged", "renewed"])]
         if self.branch_id:
-            domain.append(("branch_id", "=", self.branch_id.id))
+            domain.append(("company_id", "=", self.branch_id.id))
         action["domain"] = domain
         return action
 
@@ -91,20 +90,20 @@ class PawnDashboard(models.TransientModel):
         today = fields.Date.context_today(self)
         domain_ticket = []
         if branch_id:
-            domain_ticket.append(("branch_id", "=", int(branch_id)))
+            domain_ticket.append(("company_id", "=", int(branch_id)))
 
         # KPIs
-        active_tickets = Ticket.search_count(domain_ticket + [("state", "in", ["active", "renewed"])])
-        due_today = Ticket.search_count(domain_ticket + [("date_maturity", "=", today), ("state", "in", ["active", "renewed"])])
-        in_grace = Ticket.search_count(domain_ticket + [("state", "=", "active"), ("date_maturity", "<", today)])
-        overdue = Ticket.search_count(domain_ticket + [("state", "in", ["renewed", "active"]), ("date_maturity", "<", today)])
+        active_tickets = Ticket.search_count(domain_ticket + [("state", "in", ["pledged", "renewed"])])
+        due_today = Ticket.search_count(domain_ticket + [("date_maturity", "=", today), ("state", "in", ["pledged", "renewed"])])
+        in_grace = Ticket.search_count(domain_ticket + [("state", "=", "pledged"), ("date_maturity", "<", today)])
+        overdue = Ticket.search_count(domain_ticket + [("state", "in", ["renewed", "pledged"]), ("date_maturity", "<", today)])
         forfeited = Ticket.search_count(domain_ticket + [("state", "=", "forfeited")])
 
         # Monthly sums (posted customer invoices linked to tickets)
         first_day = today.replace(day=1)
         inv_domain = [("move_type", "=", "out_invoice"), ("invoice_date", ">=", first_day), ("state", "=", "posted")]
         if branch_id:
-            inv_domain.append(("pawn_ticket_id.branch_id", "=", int(branch_id)))
+            inv_domain.append(("pawn_ticket_id.company_id", "=", int(branch_id)))
         moves = AccountMove.search(inv_domain)
         principal_month = sum(m.amount_untaxed for m in moves)
         interest_month = sum(m.amount_tax for m in moves)

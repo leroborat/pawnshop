@@ -60,8 +60,12 @@ class PawnRateTable(models.Model):
         default=lambda self: self.env.company
     )
     branch_ids = fields.Many2many(
-        'pawn.branch',
+        'res.company',
+        'pawn_rate_table_branch_rel',
+        'rate_table_id',
+        'branch_id',
         string='Applicable Branches',
+        domain=[('is_pawn_branch', '=', True)],
         help="Leave empty to apply to all branches"
     )
 
@@ -162,8 +166,9 @@ class PawnRateTableLine(models.Model):
         help="Apply this rate only to specific category (leave empty for all)"
     )
     branch_id = fields.Many2one(
-        'pawn.branch',
+        'res.company',
         string='Branch',
+        domain=[('is_pawn_branch', '=', True)],
         help="Apply this rate only to specific branch (leave empty for all)"
     )
 
@@ -233,7 +238,7 @@ class PawnRateTableLine(models.Model):
             if record.category_id:
                 parts.append(f"({record.category_id.name})")
             if record.branch_id:
-                parts.append(f"[{record.branch_id.code}]")
+                parts.append(f"[{record.branch_id.branch_code}]")
 
             record.name = " ".join(parts)
 

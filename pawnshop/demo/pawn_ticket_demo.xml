@@ -7,7 +7,7 @@
         <record id="pawn_ticket_001" model="pawn.ticket">
             <field name="ticket_no">MAIN-PT-251022-0001</field>
             <field name="customer_id" ref="pawn_customer_juan_dela_cruz"/>
-            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="company_id" ref="pawn_branch_main"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() + timedelta(days=15)).strftime('%Y-%m-%d')"/>
@@ -42,7 +42,7 @@
         <record id="pawn_ticket_002" model="pawn.ticket">
             <field name="ticket_no">MAIN-PT-251022-0002</field>
             <field name="customer_id" ref="pawn_customer_maria_santos"/>
-            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="company_id" ref="pawn_branch_main"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=30)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="DateTime.now().strftime('%Y-%m-%d')"/>
@@ -77,7 +77,7 @@
         <record id="pawn_ticket_003" model="pawn.ticket">
             <field name="ticket_no">DWTN-PT-251015-0001</field>
             <field name="customer_id" ref="pawn_customer_pedro_reyes"/>
-            <field name="branch_id" ref="pawn_branch_downtown"/>
+            <field name="company_id" ref="pawn_branch_downtown"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=35)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() - timedelta(days=5)).strftime('%Y-%m-%d')"/>
@@ -113,7 +113,7 @@
         <record id="pawn_ticket_004" model="pawn.ticket">
             <field name="ticket_no">MAIN-PT-250915-0003</field>
             <field name="customer_id" ref="pawn_customer_ana_garcia"/>
-            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="company_id" ref="pawn_branch_main"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=67)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() + timedelta(days=23)).strftime('%Y-%m-%d')"/>
@@ -148,7 +148,7 @@
         <record id="pawn_ticket_005" model="pawn.ticket">
             <field name="ticket_no">NRTH-PT-250920-0001</field>
             <field name="customer_id" ref="pawn_customer_roberto_cruz"/>
-            <field name="branch_id" ref="pawn_branch_northside"/>
+            <field name="company_id" ref="pawn_branch_northside"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=32)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() - timedelta(days=2)).strftime('%Y-%m-%d')"/>
@@ -183,7 +183,7 @@
         <record id="pawn_ticket_006" model="pawn.ticket">
             <field name="ticket_no">MAIN-PT-251010-0004</field>
             <field name="customer_id" ref="pawn_customer_elena_ramos"/>
-            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="company_id" ref="pawn_branch_main"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=12)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() + timedelta(days=18)).strftime('%Y-%m-%d')"/>
@@ -234,7 +234,7 @@
         <record id="pawn_ticket_007" model="pawn.ticket">
             <field name="ticket_no">DWTN-PT-251022-0002</field>
             <field name="customer_id" ref="pawn_customer_carlos_mendoza"/>
-            <field name="branch_id" ref="pawn_branch_downtown"/>
+            <field name="company_id" ref="pawn_branch_downtown"/>
             <field name="date_created" eval="DateTime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_maturity" eval="(DateTime.now() + timedelta(days=30)).strftime('%Y-%m-%d')"/>
             <field name="principal_amount">12000.00</field>
@@ -266,7 +266,7 @@
         <record id="pawn_ticket_008" model="pawn.ticket">
             <field name="ticket_no">MAIN-PT-250815-0001</field>
             <field name="customer_id" ref="pawn_customer_sofia_torres"/>
-            <field name="branch_id" ref="pawn_branch_main"/>
+            <field name="company_id" ref="pawn_branch_main"/>
             <field name="date_created" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="date_pledged" eval="(DateTime.now() - timedelta(days=68)).strftime('%Y-%m-%d')"/>
             <field name="date_maturity" eval="(DateTime.now() - timedelta(days=38)).strftime('%Y-%m-%d')"/>

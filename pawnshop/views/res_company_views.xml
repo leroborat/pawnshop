@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Inherit Company Form - Add Pawnshop tab for branches -->
+        <record id="view_company_form_pawnshop" model="ir.ui.view">
+            <field name="name">res.company.form.pawnshop</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Pawnshop" name="pawnshop">
+                        <group>
+                            <group string="Branch Settings">
+                                <field name="is_pawn_branch"/>
+                                <field name="branch_code" placeholder="e.g., MNL01" invisible="not is_pawn_branch"/>
+                                <field name="warehouse_id" options="{'no_create': True}" invisible="not is_pawn_branch"/>
+                                <field name="manager_id" widget="many2one_avatar_user" invisible="not is_pawn_branch"/>
+                                <field name="ticket_sequence_id" options="{'no_create': True}" invisible="not is_pawn_branch"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+    </data>
+</odoo>

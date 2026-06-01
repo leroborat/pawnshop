@@ -10,7 +10,7 @@
                 <list string="Pawn Tickets" default_order="date_created desc" decoration-danger="is_overdue and not is_in_grace" decoration-warning="is_in_grace" decoration-info="is_due_today" decoration-muted="state in ('cancelled', 'redeemed', 'forfeited')">
                     <field name="ticket_no"/>
                     <field name="customer_id"/>
-                    <field name="branch_id"/>
+                    <field name="company_id" string="Branch"/>
                     <field name="date_created"/>
                     <field name="date_maturity"/>
                     <field name="days_to_maturity" string="Days"/>
@@ -79,7 +79,7 @@
                         <group>
                             <group name="customer_info" string="Customer Information">
                                 <field name="customer_id" options="{'no_create': True, 'no_open': True}"/>
-                                <field name="branch_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                                <field name="company_id" string="Branch" options="{'no_create': True}" readonly="state != 'draft'" domain="[('is_pawn_branch', '=', True)]"/>
                                 <field name="date_created" readonly="1"/>
                                 <field name="date_pledged" readonly="1"/>
                             </group>
@@ -176,7 +176,7 @@
                 <kanban default_group_by="state" class="o_kanban_small_column" quick_create="false">
                     <field name="ticket_no"/>
                     <field name="customer_id"/>
-                    <field name="branch_id"/>
+                    <field name="company_id" string="Branch"/>
                     <field name="date_maturity"/>
                     <field name="days_to_maturity"/>
                     <field name="principal_amount"/>
@@ -204,7 +204,7 @@
                                         <field name="customer_id"/>
                                         <br/>
                                         <small>
-                                            Branch: <field name="branch_id"/>
+                                            Branch: <field name="company_id" string="Branch"/>
                                         </small>
                                         <br/>
                                         <small>
@@ -236,7 +236,7 @@
                 <search string="Search Pawn Tickets">
                     <field name="ticket_no"/>
                     <field name="customer_id"/>
-                    <field name="branch_id"/>
+                    <field name="company_id" string="Branch"/>
                     <field name="date_created"/>
                     <field name="date_maturity"/>
 
@@ -260,7 +260,7 @@
                             domain="[('date_created', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
 
                     <group>
-                        <filter string="Branch" name="group_branch" context="{'group_by':'branch_id'}"/>
+                        <filter string="Branch" name="group_branch" context="{'group_by':'company_id'}"/>
                         <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
                         <filter string="Customer" name="group_customer" context="{'group_by':'customer_id'}"/>
                         <filter string="Date Created" name="group_date_created" context="{'group_by':'date_created'}"/>
